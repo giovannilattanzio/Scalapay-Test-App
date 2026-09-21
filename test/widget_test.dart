@@ -1,30 +1,35 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:scalapay_test_app/src/core/core.dart';
+import 'package:scalapay_test_app/src/domain/domain.dart';
+import 'package:scalapay_test_app/src/presentation/presentation.dart';
+import 'package:scalapay_ui/scalapay_ui.dart';
 
-import 'package:scalapay_test_app/main.dart';
+import 'helpers/pump_app.dart';
+
+class _MockSearchProductsUseCase extends Mock
+    implements SearchProductsUseCase {}
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  setUp(() {
+    // A mocked SearchProductsUseCase keeps this boot test offline: the real
+    // Dio/CatalogApi/repository chain is never registered, so nothing here
+    // can reach the network. CatalogPage builds its own CatalogCubit from
+    // this use case rather than resolving the cubit itself, per the DI rule
+    // for single-page, single-dependency cubits.
+    injector.registerLazySingleton<SearchProductsUseCase>(
+      _MockSearchProductsUseCase.new,
+    );
+  });
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+  tearDown(() async {
+    await injector.reset();
+  });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+  testWidgets('the app boots to the catalog screen', (tester) async {
+    await pumpApp(tester, const CatalogPage());
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.text('Esplora i prodotti'), findsOneWidget);
+    expect(find.byType(ScalapaySearchField), findsOneWidget);
   });
 }

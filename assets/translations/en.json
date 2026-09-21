@@ -1,0 +1,35 @@
+{
+  "catalog": {
+    "title": "Explore products",
+    "search_hint": "Search brands or stores",
+    "filters": "Filters",
+    "sort": "Sort",
+    "initial": "Search for a brand or store to get started",
+    "empty": "No results for \"{query}\"",
+    "error_network": "Check your connection and try again.",
+    "error_server": "The service is currently unavailable. Please try again later.",
+    "error_parsing": "We couldn't read the results. Please try again later.",
+    "error_generic": "Something went wrong. Please try again.",
+    "retry": "Retry",
+    "load_more_error": "Couldn't load more. Retry."
+  },
+  "product": {
+    "installment_connector": "instalments of",
+    "currency": "€"
+  },
+  "filters": {
+    "title": "Filters",
+    "price_title": "Price range",
+    "min": "Minimum",
+    "max": "Maximum",
+    "clear": "Clear all",
+    "apply": "Show results",
+    "inverted_range": "Minimum cannot be greater than maximum."
+  },
+  "sort": {
+    "title": "Sort",
+    "relevance": "Relevance",
+    "price_asc": "Price: low to high",
+    "price_desc": "Price: high to low"
+  }
+}

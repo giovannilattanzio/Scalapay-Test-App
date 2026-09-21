@@ -1,0 +1,35 @@
+{
+  "catalog": {
+    "title": "Esplora i prodotti",
+    "search_hint": "Cerca brand o negozi",
+    "filters": "Filtri",
+    "sort": "Ordina",
+    "initial": "Cerca un brand o un negozio per iniziare",
+    "empty": "Nessun risultato per \"{query}\"",
+    "error_network": "Controlla la tua connessione e riprova.",
+    "error_server": "Il servizio non è al momento disponibile. Riprova più tardi.",
+    "error_parsing": "Non siamo riusciti a leggere i risultati. Riprova più tardi.",
+    "error_generic": "Qualcosa è andato storto. Riprova.",
+    "retry": "Riprova",
+    "load_more_error": "Caricamento non riuscito. Riprova."
+  },
+  "product": {
+    "installment_connector": "rate da",
+    "currency": "€"
+  },
+  "filters": {
+    "title": "Filtri",
+    "price_title": "Fascia di prezzo",
+    "min": "Minimo",
+    "max": "Massimo",
+    "clear": "Cancella tutto",
+    "apply": "Mostra risultati",
+    "inverted_range": "Il minimo non può superare il massimo."
+  },
+  "sort": {
+    "title": "Ordina",
+    "relevance": "Rilevanza",
+    "price_asc": "Prezzo crescente",
+    "price_desc": "Prezzo decrescente"
+  }
+}

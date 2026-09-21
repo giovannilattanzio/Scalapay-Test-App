@@ -1,0 +1,9 @@
+export 'catalog_defaults.dart';
+export 'entities/price_range.dart';
+export 'entities/product.dart';
+export 'entities/product_page_accumulator.dart';
+export 'entities/product_search_result.dart';
+export 'entities/product_sort.dart';
+export 'repositories/i_product_repository.dart';
+export 'usecases/product_search_params.dart';
+export 'usecases/search_products_use_case.dart';

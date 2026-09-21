@@ -1,0 +1,558 @@
+{
+  "page": 1,
+  "facet_counts": [
+    {
+      "field_name": "category",
+      "counts": [
+        {
+          "count": 3,
+          "highlighted": "",
+          "value": "Salute e Bellezza > Bellezza > Deodoranti"
+        },
+        {
+          "count": 1,
+          "highlighted": "",
+          "value": "Salute e Bellezza > Bellezza > Profumi"
+        },
+        {
+          "count": 1,
+          "highlighted": "",
+          "value": "Salute e Bellezza > Bellezza > Prodotti per il Corpo"
+        },
+        {
+          "count": 22,
+          "highlighted": "",
+          "value": "Sport e Tempo libero > Camping"
+        },
+        {
+          "count": 67,
+          "highlighted": "",
+          "value": "Moda > Abbigliamento > Abbigliamento Sportivo"
+        },
+        {
+          "count": 15,
+          "highlighted": "",
+          "value": "Moda > Accessori Moda > Cappelli"
+        },
+        {
+          "count": 13,
+          "highlighted": "",
+          "value": "Moda > Intimo > Intimo bambini e neonati"
+        },
+        {
+          "count": 28,
+          "highlighted": "",
+          "value": "Sport e Tempo libero > Calcio e Calcetto"
+        },
+        {
+          "count": 1,
+          "highlighted": "",
+          "value": "Sport e Tempo libero > Altro Materiale Sportivo"
+        },
+        {
+          "count": 6,
+          "highlighted": "",
+          "value": "Sport e Tempo libero > Basket"
+        },
+        {
+          "count": 49,
+          "highlighted": "",
+          "value": "Salute e Bellezza > Salute > Integratori e Vitamine"
+        },
+        {
+          "count": 34,
+          "highlighted": "",
+          "value": "Moda > Abbigliamento > Abbigliamento bambini e neonati"
+        },
+        {
+          "count": 19,
+          "highlighted": "",
+          "value": "Moda > Abbigliamento > Abbigliamento Uomo"
+        },
+        {
+          "count": 11,
+          "highlighted": "",
+          "value": "Sport e Tempo libero > Prodotti per il Fitness > Altre Attrezzature fitness"
+        },
+        {
+          "count": 2,
+          "highlighted": "",
+          "value": "Sport e Tempo libero > Tennis"
+        },
+        {
+          "count": 3,
+          "highlighted": "",
+          "value": "Moda > Accessori Moda > Sciarpe, foulard e guanti"
+        },
+        {
+          "count": 2,
+          "highlighted": "",
+          "value": "Moda > Scarpe > Scarpe Uomo"
+        },
+        {
+          "count": 4,
+          "highlighted": "",
+          "value": "Moda > Abbigliamento > Abbigliamento Donna"
+        },
+        {
+          "count": 12,
+          "highlighted": "",
+          "value": "Moda > Intimo > Intimo Uomo"
+        },
+        {
+          "count": 1,
+          "highlighted": "",
+          "value": "Sport e Tempo libero > Prodotti per il Fitness > Pesistica"
+        },
+        {
+          "count": 2,
+          "highlighted": "",
+          "value": "Moda > Scarpe > Prodotti per la cura della scarpa"
+        },
+        {
+          "count": 1,
+          "highlighted": "",
+          "value": "Sport e Tempo libero > Padel"
+        },
+        {
+          "count": 2,
+          "highlighted": "",
+          "value": "Moda > Abbigliamento > Costumi e Moda Mare"
+        },
+        {
+          "count": 1,
+          "highlighted": "",
+          "value": "Casa e Giardino > Giardino e Terrazzo > Accessori Piscina"
+        }
+      ],
+      "stats": {}
+    },
+    {
+      "field_name": "merchant",
+      "counts": [
+        {
+          "count": 4,
+          "highlighted": "parfimoit",
+          "value": "Parfimo"
+        },
+        {
+          "count": 1,
+          "highlighted": "farmacialoreto",
+          "value": "Farmacia Loreto"
+        },
+        {
+          "count": 64,
+          "highlighted": "erreaplay",
+          "value": "Erreà Play"
+        },
+        {
+          "count": 109,
+          "highlighted": "maxisport",
+          "value": "Maxi Sport"
+        },
+        {
+          "count": 28,
+          "highlighted": "gmvegasi",
+          "value": "GM Vegasi"
+        },
+        {
+          "count": 9,
+          "highlighted": "anaclericosportit",
+          "value": "Anaclerico sport"
+        },
+        {
+          "count": 18,
+          "highlighted": "sportnetitalia",
+          "value": "Sportnet"
+        },
+        {
+          "count": 1,
+          "highlighted": "farmair",
+          "value": "Farmair"
+        },
+        {
+          "count": 2,
+          "highlighted": "tuanatura",
+          "value": "Tuanatura"
+        },
+        {
+          "count": 1,
+          "highlighted": "petroneonline",
+          "value": "Petrone OnLine"
+        },
+        {
+          "count": 1,
+          "highlighted": "subitofarma",
+          "value": "Ferrari Farmacia 2"
+        },
+        {
+          "count": 2,
+          "highlighted": "farmanika",
+          "value": "FarmaNika"
+        },
+        {
+          "count": 1,
+          "highlighted": "benufarma",
+          "value": "Benu Farma"
+        },
+        {
+          "count": 2,
+          "highlighted": "rimedialternativi",
+          "value": "Rimedi alternativi"
+        },
+        {
+          "count": 2,
+          "highlighted": "farmastelia",
+          "value": "Farmastelia"
+        },
+        {
+          "count": 2,
+          "highlighted": "3cfarma",
+          "value": "3C Farma"
+        },
+        {
+          "count": 2,
+          "highlighted": "farmaciauno",
+          "value": "Farmacia Uno"
+        },
+        {
+          "count": 2,
+          "highlighted": "farmaciasanvitocom",
+          "value": "Farmacia San Vito"
+        },
+        {
+          "count": 2,
+          "highlighted": "farmaself",
+          "value": "Farmaself"
+        },
+        {
+          "count": 1,
+          "highlighted": "farmaglobo",
+          "value": "Farmaglobo"
+        },
+        {
+          "count": 2,
+          "highlighted": "granfarma",
+          "value": "GranFarma"
+        },
+        {
+          "count": 5,
+          "highlighted": "sportactivezacca",
+          "value": "Sport Active Zaccà"
+        },
+        {
+          "count": 1,
+          "highlighted": "basefarma",
+          "value": "Basefarma"
+        },
+        {
+          "count": 1,
+          "highlighted": "farmaciadelverde",
+          "value": "Farmacia Del Verde "
+        },
+        {
+          "count": 2,
+          "highlighted": "farmaciaferreri",
+          "value": "Farmacia Ferreri dal 1973"
+        },
+        {
+          "count": 2,
+          "highlighted": "verafarmait",
+          "value": "Verafarma"
+        },
+        {
+          "count": 2,
+          "highlighted": "axafarmacom",
+          "value": "Axafarma"
+        },
+        {
+          "count": 2,
+          "highlighted": "farmaciasoccavo",
+          "value": "Farmacia Soccavo"
+        },
+        {
+          "count": 1,
+          "highlighted": "farmaciabolli1833",
+          "value": "Farmacia Bolli 1833"
+        },
+        {
+          "count": 1,
+          "highlighted": "bfarmait",
+          "value": "BFarma"
+        },
+        {
+          "count": 1,
+          "highlighted": "benesserefarmacia",
+          "value": "Benessere Farmacia"
+        },
+        {
+          "count": 2,
+          "highlighted": "farmait",
+          "value": "Farma.it"
+        },
+        {
+          "count": 2,
+          "highlighted": "1000farmacie",
+          "value": "1000 Farmacie"
+        },
+        {
+          "count": 1,
+          "highlighted": "farmacisticonte",
+          "value": "Farmacisti Con Te"
+        },
+        {
+          "count": 11,
+          "highlighted": "csipoint",
+          "value": "Csipoint"
+        },
+        {
+          "count": 2,
+          "highlighted": "semprefarmacia",
+          "value": "Semprefarmacia"
+        },
+        {
+          "count": 1,
+          "highlighted": "ziliottigroup",
+          "value": "Ziliottigroup"
+        },
+        {
+          "count": 1,
+          "highlighted": "redcare",
+          "value": "Redcare"
+        },
+        {
+          "count": 1,
+          "highlighted": "farmaciairisdiana",
+          "value": "Farmacia Iris Diana"
+        },
+        {
+          "count": 1,
+          "highlighted": "fitnessdigitalit",
+          "value": "Fitness Digital"
+        },
+        {
+          "count": 1,
+          "highlighted": "mypersonalfarma",
+          "value": "My Personal Farma"
+        },
+        {
+          "count": 1,
+          "highlighted": "farmaciamandanici",
+          "value": "Farmacia Mandanici"
+        },
+        {
+          "count": 1,
+          "highlighted": "farmaoasi",
+          "value": "Farma Oasi"
+        },
+        {
+          "count": 1,
+          "highlighted": "nepopiscine",
+          "value": "Nepo Piscine"
+        }
+      ],
+      "stats": {}
+    },
+    {
+      "field_name": "brand",
+      "counts": [
+        {
+          "count": 241,
+          "highlighted": "nike",
+          "value": "Nike"
+        },
+        {
+          "count": 42,
+          "highlighted": "new_mercury",
+          "value": "New Mercury"
+        }
+      ],
+      "stats": {}
+    },
+    {
+      "field_name": "selling_price",
+      "counts": [],
+      "stats": {
+        "min": 3.4,
+        "max": 21
+      }
+    }
+  ],
+  "found": 6,
+  "grouped_hits": [
+    {
+      "hits": [
+        {
+          "document": {
+            "affiliate_url": "https://www.trovaprezzi.it/splashsp?impression=Vzl6eFN4eHZRNFR6eHNPUVlyQmdxVHVWUlZnSkdHMFUwZUVEMEtXWUNwM29QSzc1WHV4ZG93PT01&offer=MXBvQXM4eThYMjZXZ293T0hNZEI4d1hOV0dNM0dDOEZiUUhzZUZicklkNjVvUDVkLzJ6WXlYS05CMG5GbmtCWGM0ZlRYbGxFWjJYZG9JSkNTa2RBdktLcTNwaE4xYUFBTi92OHJ6RGtHQzQ0VnYrTlpXQlc3NFNncy9UWE5pV1QvMEdCaS93YU9nWVJCN3RrTER3N2xab2VZamw0K0FXRHluNlBYM2JSWUorOEJnNlI1aGxDQWxHdDVJNCtHaXA0ZXQ4VW4weGpFVHh0V1hUZTNwWHJDeWtTTXZHMGJqYWRKMjVoWThSZmg1T0EydUxuckJ5VjhQVzNBZ0o3YWx6cHNMRzJ5SUVpUDNCS2t5ekpQdE5kcnBhU3hUdTlyWG9PUzNGRktsVkdSQ2lmenRXOURvakYvdThBVGNWZFh5Y212eHFldGZEYmttQTRsNzdqSzd1UmFpckJsQzhIbTRKcGlRVy9XSFRUL3N5UkhSOUhXSnZOdWVGWUs2RnlNSlRITWZJbEtQOVNaZWxWYk5ZWjFGMFJtYXM5RW9DajdyUVBFOWVFYVl5ZThzaldaYTRmK1FXdlhKWStVTXA0MGNKRW5nOHVNaU8wKzgrKzFNN0h1bnZxQUVQWkhFNG5XWnpD0&sid=&utm_medium=referral&utm_source=scalapayappit",
+            "brand": "",
+            "brandId": "",
+            "category": "Salute e Bellezza > Bellezza > Prodotti per il Corpo",
+            "category_1": "Salute e Bellezza",
+            "category_2": "Bellezza > Prodotti per il Corpo",
+            "description": "Dea Sense Leggerezza Bagno Doccia Alta Natura Percorso Meta - Sensoriale - Dea Sense bagnodoccia Leggerezza è ispirato alla dea Nike, la splendida dea della vittoria, tanto agile quanto bella. È ideale per la donna che, dopo aver raggiunto un traguardo, …",
+            "discount_percentage": 0,
+            "has_image": 1,
+            "id": "569515057",
+            "image": "https://pics.trovaprezzi.it/it-300x300/569515057.jpg",
+            "image_merchant": "https://immagini.trovaprezzi.it/negozi/farmacialoreto.png?tr=w-80,h-30,cm-pad_resize,bg-FFFFFF",
+            "list_price": 6,
+            "merchant": "Farmacia Loreto",
+            "merchantId": "farmacialoreto",
+            "new_offer": false,
+            "selling_price": 6,
+            "tags": [],
+            "title": "ALTA NATURA-INALME Srl Dea Sense Leggerezza Bagno Doccia Alta Natura 200ml",
+            "url": "https://www.trovaprezzi.it/splashsp?impression=Vzl6eFN4eHZRNFR6eHNPUVlyQmdxVHVWUlZnSkdHMFUwZUVEMEtXWUNwM29QSzc1WHV4ZG93PT01&offer=MXBvQXM4eThYMjZXZ293T0hNZEI4d1hOV0dNM0dDOEZiUUhzZUZicklkNjVvUDVkLzJ6WXlYS05CMG5GbmtCWGM0ZlRYbGxFWjJYZG9JSkNTa2RBdktLcTNwaE4xYUFBTi92OHJ6RGtHQzQ0VnYrTlpXQlc3NFNncy9UWE5pV1QvMEdCaS93YU9nWVJCN3RrTER3N2xab2VZamw0K0FXRHluNlBYM2JSWUorOEJnNlI1aGxDQWxHdDVJNCtHaXA0ZXQ4VW4weGpFVHh0V1hUZTNwWHJDeWtTTXZHMGJqYWRKMjVoWThSZmg1T0EydUxuckJ5VjhQVzNBZ0o3YWx6cHNMRzJ5SUVpUDNCS2t5ekpQdE5kcnBhU3hUdTlyWG9PUzNGRktsVkdSQ2lmenRXOURvakYvdThBVGNWZFh5Y212eHFldGZEYmttQTRsNzdqSzd1UmFpckJsQzhIbTRKcGlRVy9XSFRUL3N5UkhSOUhXSnZOdWVGWUs2RnlNSlRITWZJbEtQOVNaZWxWYk5ZWjFGMFJtYXM5RW9DajdyUVBFOWVFYVl5ZThzaldaYTRmK1FXdlhKWStVTXA0MGNKRW5nOHVNaU8wKzgrKzFNN0h1bnZxQUVQWkhFNG5XWnpD0&sid=&utm_medium=referral&utm_source=scalapayappit"
+          }
+        }
+      ]
+    },
+    {
+      "hits": [
+        {
+          "document": {
+            "affiliate_url": "https://www.trovaprezzi.it/splashsp?impression=Vzl6eFN4eHZRNFR6eHNPUVlyQmdxVHVWUlZnSkdHMFUwZUVEMEtXWUNwM29QSzc1WHV4ZG93PT01&offer=YU9mZUR6VTJKZ0RsWGI4dTcvZEhvT3FJeGNxMjNuUFV1bE4xc2RUaHFubnF6cCtyZEY3eEZTSDN0MnQwMTJ6alNHcmNudW1wTVd6TW04d0FsYUNlU2dEc1BOeGNnL09tZ0xNUUw3dFlFd010eU5TU1A4SkMzSVlqU3lkdExDTzlGMWRnaVF6UDM2eHNvTEtHaDBrWW5XenNtaGhKMjJJcDMyOHo1b0pMTVQvcGdnbklHZU5PbzM4cVFzdXRZTUJaWTBPYUdHVDJCQWIrL0V0UFZVay9WTVNqajVxenVEV3J2S1ZuZ1dqdko4YzhkQWh5ZUpSUnBwRDFTU2lVYXhoRVRpTXExMWhBak5QSEp6aG43aEFEMUsyQkkrUERFSFkxT2lFZ3ZEOVIwZjJTRk1mRnJHU0xVa1FjbUVhUitiMUpyQUNTVG15blQ2QXhYbWVUUGV1ODR1QW9IRjYvamIrcDlSSDR3S3Bqdkc5L3krd1FuNWVRc25HUE1lMVBwakVqNWRrVlF5RzlQTGNUakZ6MzJoQUV0dUZIeWpGd3RMTFp3NzFWRW93cFVsbEtUR1ZrazZwNGhNWHpFK29kS1V3OTFCRU0vWHhhaDdyeTJBQU8wTWxmblE9PQ2&sid=&utm_medium=referral&utm_source=scalapayappit",
+            "brand": "Nike",
+            "brandId": "nike",
+            "category": "Sport e Tempo libero > Camping",
+            "category_1": "Sport e Tempo libero",
+            "category_2": "Camping",
+            "description": "Nike Borraccia Big Mouth 2.0 - DARK TEAM RED/BLACK/MAGIC EMBER",
+            "discount_percentage": 20,
+            "has_image": 1,
+            "id": "897641638",
+            "image": "https://pics.trovaprezzi.it/it-300x300/897641638.jpg",
+            "image_merchant": "https://immagini.trovaprezzi.it/negozi/erreaplay.png?tr=w-80,h-30,cm-pad_resize,bg-FFFFFF",
+            "list_price": 10,
+            "merchant": "Erreà Play",
+            "merchantId": "erreaplay",
+            "new_offer": false,
+            "selling_price": 8,
+            "tags": [],
+            "title": "Nike Borraccia Big Mouth 2.0",
+            "url": "https://www.trovaprezzi.it/splashsp?impression=Vzl6eFN4eHZRNFR6eHNPUVlyQmdxVHVWUlZnSkdHMFUwZUVEMEtXWUNwM29QSzc1WHV4ZG93PT01&offer=YU9mZUR6VTJKZ0RsWGI4dTcvZEhvT3FJeGNxMjNuUFV1bE4xc2RUaHFubnF6cCtyZEY3eEZTSDN0MnQwMTJ6alNHcmNudW1wTVd6TW04d0FsYUNlU2dEc1BOeGNnL09tZ0xNUUw3dFlFd010eU5TU1A4SkMzSVlqU3lkdExDTzlGMWRnaVF6UDM2eHNvTEtHaDBrWW5XenNtaGhKMjJJcDMyOHo1b0pMTVQvcGdnbklHZU5PbzM4cVFzdXRZTUJaWTBPYUdHVDJCQWIrL0V0UFZVay9WTVNqajVxenVEV3J2S1ZuZ1dqdko4YzhkQWh5ZUpSUnBwRDFTU2lVYXhoRVRpTXExMWhBak5QSEp6aG43aEFEMUsyQkkrUERFSFkxT2lFZ3ZEOVIwZjJTRk1mRnJHU0xVa1FjbUVhUitiMUpyQUNTVG15blQ2QXhYbWVUUGV1ODR1QW9IRjYvamIrcDlSSDR3S3Bqdkc5L3krd1FuNWVRc25HUE1lMVBwakVqNWRrVlF5RzlQTGNUakZ6MzJoQUV0dUZIeWpGd3RMTFp3NzFWRW93cFVsbEtUR1ZrazZwNGhNWHpFK29kS1V3OTFCRU0vWHhhaDdyeTJBQU8wTWxmblE9PQ2&sid=&utm_medium=referral&utm_source=scalapayappit"
+          }
+        }
+      ]
+    },
+    {
+      "hits": [
+        {
+          "document": {
+            "affiliate_url": "https://www.trovaprezzi.it/splashsp?impression=Vzl6eFN4eHZRNFR6eHNPUVlyQmdxVHVWUlZnSkdHMFUwZUVEMEtXWUNwM29QSzc1WHV4ZG93PT01&offer=YU9mZUR6VTJKZ0JjTEdhZklPYW9rU2orSEFZMmZvalRZYWZBVlc5TDdSZ3hINFRVeit6MUFINWk1OEZZNG05QkswdTIrb3AwcFduSHlNMkoydE1IQmY3R3FIbkpzWFgweDJzdjdjdk9JNmd1czJxNzJwWGsxdEFLelBhTkNURUM1YnMrZ0pyOVdnUkN6N0FKSzdGKzNhRjVUTmM3UmowVkdBQnVXVzJBWHNScTFBOG0wSldER3pOVTluOGx6a3BGakl2VTQyQWJuNGYyRkdIMkVsWXVCVVZPK2ExYVpHU0JxTmllclNXaVFPa2R1MkpGcDJleXZweDBZZ2lZZ3J5OGtqMWJ6WU9jMUp6VUl0QzZNWlc1L2MyWDhyNjdOWjJ0blB3d2c4U1E2d3h5VGhpcThJZmJkWmtkMWFXMHlpQmhRNkRxVXl3VjRiMWRaRzU0ZHpqUENrNkYzdS9McGhTZlNrOVc3QUlINGRRbUlRNzFCQ2FLVDd6M1ZuMTZMMUJxZTdyQUZqdSsvZitKR2xrb290bFlrUWdka2JDTDQzTUdsaDAwUDJEQnVLVXVTejcreWU1R1Arcm1DM2VHaGtEMHdWNzh3MGRRTzRQU3RoVTg0UWVaUnc9PQ2&sid=&utm_medium=referral&utm_source=scalapayappit",
+            "brand": "Nike",
+            "brandId": "nike",
+            "category": "Sport e Tempo libero > Camping",
+            "category_1": "Sport e Tempo libero",
+            "category_2": "Camping",
+            "description": "Nike Borraccia Big Mouth 2.0 - HYPER ROYAL/BLACK/UNIVERSITY BLUE/LT KHAKI",
+            "discount_percentage": 20,
+            "has_image": 1,
+            "id": "897641641",
+            "image": "https://pics.trovaprezzi.it/it-300x300/897641641.jpg",
+            "image_merchant": "https://immagini.trovaprezzi.it/negozi/erreaplay.png?tr=w-80,h-30,cm-pad_resize,bg-FFFFFF",
+            "list_price": 10,
+            "merchant": "Erreà Play",
+            "merchantId": "erreaplay",
+            "new_offer": false,
+            "selling_price": 8,
+            "tags": [],
+            "title": "Nike Borraccia Big Mouth 2.0",
+            "url": "https://www.trovaprezzi.it/splashsp?impression=Vzl6eFN4eHZRNFR6eHNPUVlyQmdxVHVWUlZnSkdHMFUwZUVEMEtXWUNwM29QSzc1WHV4ZG93PT01&offer=YU9mZUR6VTJKZ0JjTEdhZklPYW9rU2orSEFZMmZvalRZYWZBVlc5TDdSZ3hINFRVeit6MUFINWk1OEZZNG05QkswdTIrb3AwcFduSHlNMkoydE1IQmY3R3FIbkpzWFgweDJzdjdjdk9JNmd1czJxNzJwWGsxdEFLelBhTkNURUM1YnMrZ0pyOVdnUkN6N0FKSzdGKzNhRjVUTmM3UmowVkdBQnVXVzJBWHNScTFBOG0wSldER3pOVTluOGx6a3BGakl2VTQyQWJuNGYyRkdIMkVsWXVCVVZPK2ExYVpHU0JxTmllclNXaVFPa2R1MkpGcDJleXZweDBZZ2lZZ3J5OGtqMWJ6WU9jMUp6VUl0QzZNWlc1L2MyWDhyNjdOWjJ0blB3d2c4U1E2d3h5VGhpcThJZmJkWmtkMWFXMHlpQmhRNkRxVXl3VjRiMWRaRzU0ZHpqUENrNkYzdS9McGhTZlNrOVc3QUlINGRRbUlRNzFCQ2FLVDd6M1ZuMTZMMUJxZTdyQUZqdSsvZitKR2xrb290bFlrUWdka2JDTDQzTUdsaDAwUDJEQnVLVXVTejcreWU1R1Arcm1DM2VHaGtEMHdWNzh3MGRRTzRQU3RoVTg0UWVaUnc9PQ2&sid=&utm_medium=referral&utm_source=scalapayappit"
+          }
+        }
+      ]
+    },
+    {
+      "hits": [
+        {
+          "document": {
+            "affiliate_url": "https://www.trovaprezzi.it/splashsp?impression=Vzl6eFN4eHZRNFR6eHNPUVlyQmdxVHVWUlZnSkdHMFUwZUVEMEtXWUNwM29QSzc1WHV4ZG93PT01&offer=dHphUDAydGxBUU92OWoyTjFTRjAzQ3RaSGhzUXBWN3dIeWVMSzhXVDVGQW9aVXZFU3I1ak8zUEFnUGtZVlkzM1oyQklybTlUczYrZTlqNGF2c0FWUzRwTG9RMUVCNmNwaWxXQ3JDYk1PNVZja3FKVEc0cDREK3UrUEJaUHdkR1p0UkZGbTNONlZFVSsvaS8zWFR4REg4Yk1KRE5Ub1lGNlorUUd0MnA5N0Q1T0JlRFVsNmwrTVBubEZWYS9qaWRGL1N0Q3VsdkwxTFBFc3VLbXptK2tyaDZJSU9nVk1vM2VxMGR5U0I0NXRmT0RHOUNpazJEYWJUTDNlK243TkE1RkMvd041OUlSU0lhUmIwb3hGVU81MXZ1dDBHU3VBcUNWQnNsTVk0dE5GS3NNTnVpQU1sMzBybDJOZ2hiRmpzQ05mN09MMllycU9DMlpoUjJseUtuY1RHc3N0TUJab0ViQ2tNem9CWnByR0VCQ3B5azV3Z2JMWkI5Qi9yUlhjS0lXUEFXVmpSK08yelFYNFd2SFZPSlFZUT090&sid=&utm_medium=referral&utm_source=scalapayappit",
+            "brand": "",
+            "brandId": "",
+            "category": "Salute e Bellezza > Bellezza > Deodoranti",
+            "category_1": "Salute e Bellezza",
+            "category_2": "Bellezza > Deodoranti",
+            "description": "Nike Indigo Man di Nike è una fragranza legnosa aromatica da uomo, lanciata sul mercato nel 2015. Questa fragranza combina fresche note agrumate e speziate con una base calda e legnosa, creando un carattere sofisticato e maschile. In apertura vi avvolge …",
+            "discount_percentage": 0,
+            "has_image": 1,
+            "id": "964947151",
+            "image": "https://pics.trovaprezzi.it/it-300x300/964947151.jpg",
+            "image_merchant": "https://immagini.trovaprezzi.it/negozi/parfimoit.png?tr=w-80,h-30,cm-pad_resize,bg-FFFFFF",
+            "list_price": 3.4,
+            "merchant": "Parfimo",
+            "merchantId": "parfimoit",
+            "new_offer": false,
+            "selling_price": 3.4,
+            "tags": [],
+            "title": "Nike Perfumes Indigo Man Deodorante uomo 200 ml",
+            "url": "https://www.trovaprezzi.it/splashsp?impression=Vzl6eFN4eHZRNFR6eHNPUVlyQmdxVHVWUlZnSkdHMFUwZUVEMEtXWUNwM29QSzc1WHV4ZG93PT01&offer=dHphUDAydGxBUU92OWoyTjFTRjAzQ3RaSGhzUXBWN3dIeWVMSzhXVDVGQW9aVXZFU3I1ak8zUEFnUGtZVlkzM1oyQklybTlUczYrZTlqNGF2c0FWUzRwTG9RMUVCNmNwaWxXQ3JDYk1PNVZja3FKVEc0cDREK3UrUEJaUHdkR1p0UkZGbTNONlZFVSsvaS8zWFR4REg4Yk1KRE5Ub1lGNlorUUd0MnA5N0Q1T0JlRFVsNmwrTVBubEZWYS9qaWRGL1N0Q3VsdkwxTFBFc3VLbXptK2tyaDZJSU9nVk1vM2VxMGR5U0I0NXRmT0RHOUNpazJEYWJUTDNlK243TkE1RkMvd041OUlSU0lhUmIwb3hGVU81MXZ1dDBHU3VBcUNWQnNsTVk0dE5GS3NNTnVpQU1sMzBybDJOZ2hiRmpzQ05mN09MMllycU9DMlpoUjJseUtuY1RHc3N0TUJab0ViQ2tNem9CWnByR0VCQ3B5azV3Z2JMWkI5Qi9yUlhjS0lXUEFXVmpSK08yelFYNFd2SFZPSlFZUT090&sid=&utm_medium=referral&utm_source=scalapayappit"
+          }
+        }
+      ]
+    },
+    {
+      "hits": [
+        {
+          "document": {
+            "affiliate_url": "https://www.trovaprezzi.it/splashsp?impression=Vzl6eFN4eHZRNFR6eHNPUVlyQmdxVHVWUlZnSkdHMFUwZUVEMEtXWUNwM29QSzc1WHV4ZG93PT01&offer=eFhQS1ZkRmdNRHBwZXRRUnJNWWVjRVpBdlV4clZUblZScG5tMVhhV0pXT2JubjFWQUUrMFdaMVZ4ZXlYRk11Y0tMTzg1Z3V3N2szYXNhaVRjSWRsNkZSMFdPU3pFQVprU09zY1hzSzlmWkQrdG5XWHU1YXBoRlBSV3lLYjVYOVFuQ3IvcXV4REpWOWhBYjJwVGMwaVRqYm9UUUl3YXRFa24xdEFWVHY4S1BtZHhwZ0RTYUZNcEx2SnRiN054WDlpekdXNjN3dXB5WUdJQ3k5SFRaL09GZ2JiNWJEdEdwaTJVWGpZejRtN0V0djhWWVIrMDBZV0o5djcvQzhZeW1kWE05NGtxRWdzcjRJdXZtL05EOCsybjVoS0J5dzJXUlJzWFZnckFQSzdic3MybUcvck9XRGRlRG9ad0IvS1FkampOcTZ6S3MwRFk5dTZqM0NKQnpzR243ZjIwcFl5YU9UalNFT3cyZWNTZDRRS0swVkNSajhXRlJOR1hEK0xSYUEwWVZNbTE3ZVhOZkdJekEzRWluMzlGZz090&sid=&utm_medium=referral&utm_source=scalapayappit",
+            "brand": "",
+            "brandId": "",
+            "category": "Salute e Bellezza > Bellezza > Deodoranti",
+            "category_1": "Salute e Bellezza",
+            "category_2": "Bellezza > Deodoranti",
+            "description": "Nike Pink Woman di Nike è un'eau de toilette floreale-fruttata da donna, lanciata sul mercato nel 2015. Questa fragranza propone una combinazione delicata e fresca di accordi fruttati e floreali, ideale per le donne che amano profumi leggeri ed energici …",
+            "discount_percentage": 0,
+            "has_image": 1,
+            "id": "923509399",
+            "image": "https://pics.trovaprezzi.it/it-300x300/923509399.jpg",
+            "image_merchant": "https://immagini.trovaprezzi.it/negozi/parfimoit.png?tr=w-80,h-30,cm-pad_resize,bg-FFFFFF",
+            "list_price": 3.6,
+            "merchant": "Parfimo",
+            "merchantId": "parfimoit",
+            "new_offer": false,
+            "selling_price": 3.7,
+            "tags": [],
+            "title": "Nike Perfumes Pink Woman Deodorante donna 200 ml",
+            "url": "https://www.trovaprezzi.it/splashsp?impression=Vzl6eFN4eHZRNFR6eHNPUVlyQmdxVHVWUlZnSkdHMFUwZUVEMEtXWUNwM29QSzc1WHV4ZG93PT01&offer=eFhQS1ZkRmdNRHBwZXRRUnJNWWVjRVpBdlV4clZUblZScG5tMVhhV0pXT2JubjFWQUUrMFdaMVZ4ZXlYRk11Y0tMTzg1Z3V3N2szYXNhaVRjSWRsNkZSMFdPU3pFQVprU09zY1hzSzlmWkQrdG5XWHU1YXBoRlBSV3lLYjVYOVFuQ3IvcXV4REpWOWhBYjJwVGMwaVRqYm9UUUl3YXRFa24xdEFWVHY4S1BtZHhwZ0RTYUZNcEx2SnRiN054WDlpekdXNjN3dXB5WUdJQ3k5SFRaL09GZ2JiNWJEdEdwaTJVWGpZejRtN0V0djhWWVIrMDBZV0o5djcvQzhZeW1kWE05NGtxRWdzcjRJdXZtL05EOCsybjVoS0J5dzJXUlJzWFZnckFQSzdic3MybUcvck9XRGRlRG9ad0IvS1FkampOcTZ6S3MwRFk5dTZqM0NKQnpzR243ZjIwcFl5YU9UalNFT3cyZWNTZDRRS0swVkNSajhXRlJOR1hEK0xSYUEwWVZNbTE3ZVhOZkdJekEzRWluMzlGZz090&sid=&utm_medium=referral&utm_source=scalapayappit"
+          }
+        }
+      ]
+    },
+    {
+      "hits": [
+        {
+          "document": {
+            "affiliate_url": "https://www.trovaprezzi.it/splashsp?impression=Vzl6eFN4eHZRNFR6eHNPUVlyQmdxVHVWUlZnSkdHMFUwZUVEMEtXWUNwM29QSzc1WHV4ZG93PT01&offer=dHphUDAydGxBUU1ONnhqV0E3d0VlbUswbkQ5ZnRsN3BOeXZXZithNVVYRjI5SzdGUE1TRUtXRUVsK0pNVmtOdUErSTI3R09OcjFrejhsbTczYldOODEwZEFOUHlDdWpoSjJoamhieWFHdW9NSEw4bkdUWWtQYXRUaWdUdU5HTG1hbzhnUVlzeDIrVnlFZHM4aHcyTGlWZVhMaWo4RWJQMkVReXJDRHozdEJ3Mnh0dVBMdUFDTk9PVlRVYk8zaEFyUmdGOWlVTFp6OXJZeHBob2xTK3MxZ3lOMWFicHN5QS9iK1EvVXJmMDY5WVVsdk1LSTdjdjZiOVdFaCtHWWYrWlNOcUNhUlUzM2ltTk5GTVZZSGFKd3QwNWpHckw2NWVhYXptRDh5Mk5oZjlIcHlnRllZdzlVMllVU20rR1F2bFdGV1ExZkJvSGZGVFprSHREeVZUMUtGOVNnZXBXRnVDbWJXS3V2Q2xwS3FKcmNjN0d2ZmtybDRubUZXdzhySEsvQnhEQlBWdVA2UHNhQnYvNExhU0g5Zz090&sid=&utm_medium=referral&utm_source=scalapayappit",
+            "brand": "",
+            "brandId": "",
+            "category": "Salute e Bellezza > Bellezza > Deodoranti",
+            "category_1": "Salute e Bellezza",
+            "category_2": "Bellezza > Deodoranti",
+            "description": "Nike 150 On Fire di Nike è una fragranza legnosa e ambrata da uomo, lanciata sul mercato nel 2021. Il profumo si apre con note vivaci e rinfrescanti di pepe rosa, pompelmo, mandarino tangerino e bergamotto, che insieme creano un esordio fresco e …",
+            "discount_percentage": 0,
+            "has_image": 1,
+            "id": "964947139",
+            "image": "https://pics.trovaprezzi.it/it-300x300/964947139.jpg",
+            "image_merchant": "https://immagini.trovaprezzi.it/negozi/parfimoit.png?tr=w-80,h-30,cm-pad_resize,bg-FFFFFF",
+            "list_price": 3.6,
+            "merchant": "Parfimo",
+            "merchantId": "parfimoit",
+            "new_offer": false,
+            "selling_price": 3.7,
+            "tags": [],
+            "title": "Nike Perfumes 150 On Fire Deodorante uomo 200 ml",
+            "url": "https://www.trovaprezzi.it/splashsp?impression=Vzl6eFN4eHZRNFR6eHNPUVlyQmdxVHVWUlZnSkdHMFUwZUVEMEtXWUNwM29QSzc1WHV4ZG93PT01&offer=dHphUDAydGxBUU1ONnhqV0E3d0VlbUswbkQ5ZnRsN3BOeXZXZithNVVYRjI5SzdGUE1TRUtXRUVsK0pNVmtOdUErSTI3R09OcjFrejhsbTczYldOODEwZEFOUHlDdWpoSjJoamhieWFHdW9NSEw4bkdUWWtQYXRUaWdUdU5HTG1hbzhnUVlzeDIrVnlFZHM4aHcyTGlWZVhMaWo4RWJQMkVReXJDRHozdEJ3Mnh0dVBMdUFDTk9PVlRVYk8zaEFyUmdGOWlVTFp6OXJZeHBob2xTK3MxZ3lOMWFicHN5QS9iK1EvVXJmMDY5WVVsdk1LSTdjdjZiOVdFaCtHWWYrWlNOcUNhUlUzM2ltTk5GTVZZSGFKd3QwNWpHckw2NWVhYXptRDh5Mk5oZjlIcHlnRllZdzlVMllVU20rR1F2bFdGV1ExZkJvSGZGVFprSHREeVZUMUtGOVNnZXBXRnVDbWJXS3V2Q2xwS3FKcmNjN0d2ZmtybDRubUZXdzhySEsvQnhEQlBWdVA2UHNhQnYvNExhU0g5Zz090&sid=&utm_medium=referral&utm_source=scalapayappit"
+          }
+        }
+      ]
+    }
+  ],
+  "merchantDetectedFromQuery": {
+    "id": "nike",
+    "logo": "https://cdn.sanity.io/images/t4wtxq3r/dev/3e7a62772288324e37e999600f6539920b1d1039-530x308.png",
+    "name": "Nike",
+    "merchantToken": "8KDS3SPEL"
+  }
+}

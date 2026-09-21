@@ -1,0 +1,435 @@
+openapi: 3.0.3
+
+info:
+  title: Scalapay Catalog API
+  version: "1.0.0"
+  description: |
+    Product search for the Scalapay catalog.
+
+    **This document is reverse-engineered.** The service publishes no API
+    description: every conventional path (`/openapi.json`, `/swagger.json`,
+    `/v3/api-docs`, `/swagger-ui.html`, ...) answers with API Gateway's generic
+    `403 {"message":"Missing Authentication Token"}`, which is its response to an
+    unmatched route. Everything here was derived from the assessment brief plus
+    direct probing of the live service on 2026-09-20, so it describes observed
+    behaviour rather than a vendor contract. Field descriptions record the
+    behaviours a reader could not infer from the shapes alone.
+
+servers:
+  # Only one host is declared. The assessment brief also names
+  # `catalog-api.dev.scalapay.com`, which answers 401 to the identical request
+  # with {"code":"AuthorizationNotFound","message":"Authorization header not
+  # found"}. It is the same API behind an Authorization header, but the scheme
+  # is not stated, no WWW-Authenticate header is returned, no token ships with
+  # the assessment and nothing documents how to obtain one. Declaring a
+  # securityScheme would mean guessing all three, so the host is omitted and the
+  # omission is explained in the project README.
+  - url: https://catalog-api.dev-cat.scalapay.com
+    description: Development catalog service. Requires no credentials.
+
+tags:
+  - name: Products
+    description: Searching the product catalog.
+
+paths:
+  /v1/products/search:
+    get:
+      tags: [Products]
+      operationId: searchProducts
+      summary: Search products in the catalog.
+      description: |
+        Returns products matching `q`, wrapped in a grouping envelope.
+
+        Two behaviours matter to any client and are documented on the
+        parameters below: the response carries no total, and paging clamps to
+        the first page once the pages are exhausted instead of ending.
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: |
+            Free-text search. Matched across several fields, not only the title:
+            `q=scarpe running` returns running shoes whose titles contain
+            neither word, so category and description participate. An empty
+            value returns zero results.
+          schema:
+            type: string
+          example: nike
+
+        - name: page
+          in: query
+          required: false
+          description: |
+            1-based page number.
+
+            **The service does not signal the end of the results.** Past the
+            last page it returns page 1 again, byte-identical, rather than an
+            empty page or an error. Measured on `nike`, `adidas`, `borraccia`
+            and `profumo`: each has exactly 10 pages at `per_page=30`, and page
+            11 repeats page 1. Pages 12, 13, 40, 100 and 500 also return page 1,
+            so it clamps rather than wrapping modulo. A client must therefore
+            detect the end itself, by recognising a page whose items it has
+            already received.
+          schema:
+            type: integer
+            format: int32
+            default: 1
+            minimum: 1
+          example: 1
+
+        - name: per_page
+          in: query
+          required: false
+          description: |
+            Items per page. A page is never short: every page of every query
+            observed returns exactly this many items, including the last real
+            one.
+
+            The reachable window moves with this value — 10 pages at 30, 7 at
+            50, 4 at 100 — so the number of pages must not be hardcoded by a
+            client.
+          schema:
+            type: integer
+            format: int32
+            default: 30
+            minimum: 1
+          example: 30
+
+        - name: sort_by
+          in: query
+          required: false
+          description: |
+            Ordering, as `<field>:<direction>` with direction `asc` or `desc`.
+
+            **Only `selling_price` is honoured.** `_text_match` selects the
+            default relevance order. Every other field — `title`, `brand`,
+            `merchant`, `list_price`, `discount_percentage`, `id`, `category`,
+            `new_offer`, `has_image` — is **accepted and silently ignored**,
+            returning relevance order with no error, as is a nonsense value such
+            as `garbage:asc`. In a comma-separated list the unknown field is
+            dropped and the known one applied. A client must therefore never
+            send a field outside this set: a typo would misreport the ordering
+            instead of failing.
+
+            Two further quirks: the leading underscore is not significant
+            (`text_match` is just another ignored field), and the direction is
+            inert on relevance (`_text_match:asc` equals `_text_match:desc`).
+            Omitting the parameter entirely is equivalent to `_text_match:desc`.
+          schema:
+            type: string
+            default: _text_match:desc
+          examples:
+            relevance:
+              value: _text_match:desc
+              summary: Default relevance order.
+            priceAscending:
+              value: selling_price:asc
+              summary: Cheapest first; consistent across pages.
+            priceDescending:
+              value: selling_price:desc
+              summary: Most expensive first; consistent across pages.
+
+        - name: filter_by
+          in: query
+          required: false
+          description: |
+            Faceted filter expression. The app sends it empty; no non-empty
+            value has been exercised, so its grammar is undocumented here.
+          schema:
+            type: string
+            default: ""
+
+        - name: minPrice
+          in: query
+          required: false
+          description: |
+            Lower bound on `selling_price`, inclusive. Works on its own, and
+            with any `sort_by`. Omit the parameter to leave the lower end
+            unconstrained; do not send an empty value or a zero to mean "no
+            bound".
+          schema:
+            type: number
+            format: double
+          example: 100.0
+
+        - name: maxPrice
+          in: query
+          required: false
+          description: |
+            Upper bound on `selling_price`, inclusive. Works on its own, and
+            with any `sort_by`. Omit the parameter to leave the upper end
+            unconstrained.
+          schema:
+            type: number
+            format: double
+          example: 200.0
+
+        - name: partnerId
+          in: query
+          required: true
+          description: Identifies the calling application. Constant per app.
+          schema:
+            type: string
+          example: scalapayappit
+
+        - name: source
+          in: query
+          required: true
+          description: Identifies the catalog feed. Constant per app.
+          schema:
+            type: string
+          example: trovaprezzi
+
+        - name: language
+          in: query
+          required: true
+          description: Language of the returned content, as an ISO 639-1 code.
+          schema:
+            type: string
+          example: it
+
+        - name: country
+          in: query
+          required: true
+          description: Market, as an ISO 3166-1 alpha-2 code.
+          schema:
+            type: string
+          example: IT
+
+      responses:
+        "200":
+          description: |
+            Matching products. A search with no matches is also a 200, with an
+            empty `grouped_hits` and `found` equal to 0.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductSearchResponse"
+        "401":
+          description: |
+            Returned by the alternative host that this document does not
+            declare, when no `Authorization` header is supplied.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  schemas:
+
+    ProductSearchResponse:
+      type: object
+      required: [page, found, grouped_hits]
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: Echoes the requested page number.
+        found:
+          type: integer
+          format: int32
+          description: |
+            **Not a total.** It always equals the number of items actually
+            returned: `per_page=5` gives `found: 5`, `per_page=100` gives
+            `found: 100`. There is no way to learn how many products match
+            overall, so no "x of y" progress can be shown and the end of the
+            results cannot be computed from it.
+        grouped_hits:
+          type: array
+          description: |
+            One entry per result. Each holds a list of hits, and in every
+            response observed that list has exactly one hit, so a product is
+            reached as `grouped_hits[i].hits[0].document`.
+          items:
+            $ref: "#/components/schemas/GroupedHit"
+        facet_counts:
+          type: array
+          description: Facet breakdown by category, merchant, brand and price.
+          items:
+            $ref: "#/components/schemas/FacetCount"
+        merchantDetectedFromQuery:
+          allOf:
+            - $ref: "#/components/schemas/DetectedMerchant"
+          nullable: true
+          description: |
+            Present only when the whole query is a known brand or merchant
+            (`nike` yes, `nike air force` no). It feeds a merchant banner and
+            has no effect on the ordering of the results.
+
+    GroupedHit:
+      type: object
+      required: [hits]
+      properties:
+        hits:
+          type: array
+          items:
+            $ref: "#/components/schemas/Hit"
+
+    Hit:
+      type: object
+      required: [document]
+      properties:
+        document:
+          $ref: "#/components/schemas/ProductDocument"
+
+    ProductDocument:
+      type: object
+      description: A single product offer from a merchant.
+      required:
+        - id
+        - title
+        - merchant
+        - brand
+        - image
+        - selling_price
+        - list_price
+      properties:
+        id:
+          type: string
+          description: Catalog identifier of the offer. Unique within a result set.
+        title:
+          type: string
+          description: Product name, as shown on the card.
+        description:
+          type: string
+        brand:
+          type: string
+        brandId:
+          type: string
+        merchant:
+          type: string
+          description: Store name, as shown on the card.
+        merchantId:
+          type: string
+        selling_price:
+          type: number
+          format: double
+          description: |
+            Current price. Typed as a number because the service sends whole
+            amounts as integers (`13`) and others as decimals (`13.38`) in the
+            same response.
+        list_price:
+          type: number
+          format: double
+          description: Reference price before any discount. Same integer/decimal mix.
+        discount_percentage:
+          type: number
+          format: double
+          description: Observed as an integer, typed as a number for safety.
+        image:
+          type: string
+          format: uri
+          description: Product image, 300x300.
+        image_merchant:
+          type: string
+          format: uri
+          description: Merchant logo.
+        category:
+          type: string
+          description: Full category path, levels separated by " > ".
+        category_1:
+          type: string
+        category_2:
+          type: string
+        url:
+          type: string
+          format: uri
+        affiliate_url:
+          type: string
+          format: uri
+        tags:
+          type: array
+          items:
+            type: string
+        new_offer:
+          type: boolean
+        has_image:
+          type: integer
+          format: int32
+          description: |
+            0 or 1, sent as an integer rather than a boolean, unlike
+            `new_offer`.
+        isMerchantCard:
+          type: boolean
+          description: |
+            Marks an offer from a Scalapay partner merchant. Present on a
+            minority of documents (8 of 120 sampled across four queries) and
+            absent otherwise. Such a document is a **complete product** — title,
+            brand, merchant, prices and image are all present — so it needs no
+            special handling and can be rendered as any other result.
+        merchantToken:
+          type: string
+          description: Scalapay merchant token. Accompanies `isMerchantCard`.
+
+    FacetCount:
+      type: object
+      properties:
+        field_name:
+          type: string
+          description: One of `category`, `merchant`, `brand`, `selling_price`.
+        counts:
+          type: array
+          items:
+            $ref: "#/components/schemas/FacetValue"
+        stats:
+          $ref: "#/components/schemas/FacetStats"
+
+    FacetValue:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
+        highlighted:
+          type: string
+        value:
+          type: string
+
+    FacetStats:
+      type: object
+      description: |
+        Populated only for numeric facets such as `selling_price`; an empty
+        object for the others, so both fields are optional.
+      properties:
+        min:
+          type: number
+          format: double
+        max:
+          type: number
+          format: double
+
+    DetectedMerchant:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        logo:
+          type: string
+          format: uri
+        merchantToken:
+          type: string
+
+    ErrorResponse:
+      type: object
+      properties:
+        httpStatusCode:
+          type: integer
+          format: int32
+        traceId:
+          type: string
+        path:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/ErrorDetail"
+
+    ErrorDetail:
+      type: object
+      properties:
+        message:
+          type: string
+        code:
+          type: string

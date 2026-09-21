@@ -1,0 +1,56 @@
+schema: spec-driven
+
+context: |
+  ## Project
+  scalapay_test_app: a single-package Flutter app (Android, iOS, web). Not a monorepo.
+
+  ## Tech Stack
+  - Flutter 3.47 / Dart 3.13
+  - State management: flutter_bloc (Cubit), Equatable, copy_with_extension
+  - DI: get_it, global instance `injector` (lib/src/core/di/injector.dart)
+  - Navigation: go_router (lib/src/config/router/app_router.dart)
+  - HTTP: dio; serialization: json_serializable
+  - Errors: `Result<T>` / `Failure` in lib/src/core/error (no Either, fpdart, dartz)
+  - Design system: Dart workspace package `packages/scalapay_ui` (Poppins, ThemeExtension tokens, atoms in lib/src/widgets, molecules in lib/src/molecules, organisms in lib/src/organisms (bottom sheets, each with a `show` modal helper), money formatted with intl using the app's locale) with a Widgetbook app in `packages/scalapay_ui/widgetbook`; features build UI from it, reuse existing components before adding new ones, and never hardcode colors, text styles or spacing
+  - Codegen: `dart run build_runner build --delete-conflicting-outputs`
+
+  ## Architecture
+  Clean Architecture, layer-first: `lib/src/<layer>/<feature>/`.
+  - domain: entities, repository interfaces (`i_<feature>_repository.dart`), use cases (`UseCase<T, Params>`)
+  - data: models, data sources, repository implementations, mappers
+  - presentation: cubit + `@CopyWith()` state, pages (StatelessWidget + BlocProvider), widgets
+  - core: Result, Failure, UseCase, DI
+  Dependency rule: presentation -> domain <- data. Presentation never imports data.
+
+  ## Implementation agents
+  Code is written by the `flutter-orchestrator` skill, which delegates in order to the
+  subagents `flutter-domain`, `flutter-data`, `flutter-presentation`, `flutter-infrastructure`
+  and, for packages/scalapay_ui, `flutter-design-system`
+  (definitions in .claude/agents/ and .claude/skills/flutter-orchestrator/).
+
+rules:
+  proposal:
+    - Keep proposals under 400 words
+    - Always include a "Non-goals" section under Capabilities
+  design:
+    - "Define the contracts the agents will implement: entities with fields, repository interface signatures, use case names and params, Cubit state shape and status enum, route path and guards"
+    - "Keep contracts layer-first, matching lib/src/<layer>/<feature>/"
+    - "Name every use case class with the UseCase suffix and put it in a file ending in _use_case.dart (SearchProductsUseCase in search_products_use_case.dart)"
+    - "Keep values that vary per call (page, page size, language) as parameters with defaults, not as constants read inside a data source; only values identifying the app itself are fixed"
+  tasks:
+    - Prefix every task with its layer, one of [domain], [data], [presentation], [infrastructure], [design-system] (packages/scalapay_ui and its Widgetbook) or [tooling] (workspace, agents, docs)
+    - Order tasks design-system, domain, data, presentation, infrastructure when a feature needs new atoms; otherwise domain, data, presentation, infrastructure
+    - Break tasks into steps completable in one focused session (2 hours max each)
+    - Reference the spec requirement each task satisfies where applicable
+    - "When a change introduces or alters a call to an external service, include a task whose verification is one real end-to-end call through the real dependency graph, confirming the response comes back. Mocked tests verify wiring between objects and say nothing about whether it reaches the outside world: a base URL missing from the shared HTTP client once passed 118 green tests, a clean analyzer and three reviews, and still broke every search in the running app"
+
+operations:
+  apply:
+    guidance:
+      - "Do not implement tasks directly. Delegate them to the `flutter-orchestrator` skill, passing the change name and goal from proposal.md, the contracts from design.md, the tasks of the current batch with their prefixes, and context from completed tasks"
+      - "The orchestrator skips its own planning when invoked from apply. Tasks prefixed [domain], [data], [presentation] and [infrastructure] go to the matching layer subagents; tasks prefixed [design-system] go to the `flutter-design-system` subagent, and for a change made only of [design-system] tasks the orchestrator delegates to it directly, one group of related tasks at a time"
+      - "Tasks prefixed [tooling] (workspace, agents, docs, config) have no subagent: the agent running apply does them directly"
+      - "Tick tasks in tasks.md only after the orchestrator reports them complete (for [tooling], after doing them) and `flutter analyze` is clean"
+  archive:
+    guidance:
+      - "After a change has been archived successfully (moved to the archive, with or without spec sync), append one entry at the bottom of openspec/HISTORY.md, format `- YYYY-MM-DD | <change-name> | <what the change delivered, max 2 lines>`. Use the archive date and the change name without its date prefix, and summarize from the proposal. The agent running archive writes it after the archive has completed, not before. Skip the entry if the archive was cancelled or failed"

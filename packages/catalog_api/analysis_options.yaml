@@ -1,0 +1,10 @@
+# HAND-MAINTAINED. Listed in .openapi-generator-ignore.
+#
+# Everything under lib/ is generated output and is never edited, so holding it to
+# the app's lint set would only produce noise nobody may act on. The analyzer is
+# still asked for errors, so a genuinely broken generation fails loudly.
+analyzer:
+  errors:
+    unused_import: ignore
+    unused_element: ignore
+    depend_on_referenced_packages: ignore

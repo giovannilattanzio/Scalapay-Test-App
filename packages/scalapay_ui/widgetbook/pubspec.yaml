@@ -1,0 +1,26 @@
+name: scalapay_widgetbook
+description: "Widgetbook for the Scalapay design system."
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  scalapay_ui:
+    path: ..
+  cupertino_icons: ^1.0.8
+  widgetbook: ^3.0.0
+  widgetbook_annotation: ^3.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  build_runner: ^2.4.0
+  widgetbook_generator: ^3.0.0
+
+flutter:
+  uses-material-design: true

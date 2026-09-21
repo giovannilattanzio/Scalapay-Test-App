@@ -5,9 +5,11 @@
 *.swp
 .DS_Store
 .atom/
+.build/
 .buildlog/
 .history
 .svn/
+.swiftpm/
 migrate_working_dir/
 
 # Miscellaneous
@@ -687,3 +689,9 @@ doc/api/
 
 # iOS generated file
 **/ios/Flutter/ephemeral/
+
+# packages/catalog_api is vendored generated output, committed so that a clean
+# checkout builds with Dart and Flutter alone — regenerating it needs a JDK.
+# Its .g.dart are part of that artifact, so they are exempt from the *.g.dart
+# rule above. Everything else in the repo keeps that rule.
+!packages/catalog_api/lib/**/*.g.dart
