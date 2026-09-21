@@ -49,6 +49,22 @@ void main() {
     );
   });
 
+  testWidgets('the handle uses textDisabled at 0.4 opacity', (tester) async {
+    await tester.pumpWidget(
+      _host(const BottomSheetFrame(title: 'Filtri', child: _body)),
+    );
+    final handleSize = find.byWidgetPredicate(
+      (w) => w is SizedBox && w.width == 45 && w.height == 5,
+    );
+    final box = tester.widget<DecoratedBox>(
+      find
+          .descendant(of: handleSize, matching: find.byType(DecoratedBox))
+          .first,
+    );
+    final decoration = box.decoration as BoxDecoration;
+    expect(decoration.color, colors.textDisabled.withValues(alpha: 0.4));
+  });
+
   testWidgets('has the surface color and the sheet radius on the top corners', (
     tester,
   ) async {

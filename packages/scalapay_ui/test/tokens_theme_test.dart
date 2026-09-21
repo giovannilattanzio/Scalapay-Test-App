@@ -58,6 +58,29 @@ void main() {
       expect(lerped.textStoreName, const Color(0xFF000000));
     });
 
+    test('muted primary color token', () {
+      const c = ScalapayColors();
+      expect(c.primaryMuted, const Color(0xFFCACCF2));
+      expect(c.entries['primaryMuted'], const Color(0xFFCACCF2));
+    });
+
+    test('field value color token is separate from the store name token', () {
+      const c = ScalapayColors();
+      expect(c.textInput, const Color(0xFF3A4045));
+      expect(c.entries['textInput'], const Color(0xFF3A4045));
+      expect(
+        c.entries.keys.toSet().containsAll(['textInput', 'textStoreName']),
+        isTrue,
+      );
+      final lerped = c.lerp(
+        const ScalapayColors(textInput: Color(0xFF000000)),
+        1,
+      );
+      expect(lerped.textInput, const Color(0xFF000000));
+      // Same value, different token: changing one leaves the other alone.
+      expect(lerped.textStoreName, const Color(0xFF3A4045));
+    });
+
     test('H2 style metrics', () {
       final h2 = const ScalapayTypography().h2;
       expect(h2.fontSize, 25);
@@ -70,6 +93,13 @@ void main() {
       expect(p2.fontSize, 14);
       expect(p2.fontWeight, FontWeight.w600);
       expect(p2.fontSize! * p2.height!, closeTo(21, 0.001));
+    });
+
+    test('P2 Medium style', () {
+      final p2Medium = const ScalapayTypography().p2Medium;
+      expect(p2Medium.fontSize, 14);
+      expect(p2Medium.fontWeight, FontWeight.w500);
+      expect(p2Medium.fontSize! * p2Medium.height!, closeTo(22.4, 0.001));
     });
 
     test('P5 in two weights', () {

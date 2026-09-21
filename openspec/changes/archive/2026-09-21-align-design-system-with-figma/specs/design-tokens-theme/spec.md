@@ -1,10 +1,6 @@
-# design-tokens-theme Specification
+# Spec Delta
 
-## Purpose
-
-Defines the visual foundations (colors, typography, spacing, radius) and the app theme derived from them, so every widget reads visual values from one tokenized source instead of hardcoding them.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Foundations are defined as named tokens
 The design system SHALL expose color, typography, spacing and radius values as named tokens whose values match the Figma variables: primary lilac `#5666F0`, the muted lilac `#CACCF2` (UI/Buttons/Lightweight/Lillac/Hover), the grayscale ramp (`#FFFFFF`, `#F6F7FB`, `#EFF1F5`, `#9E9E9E`, `#8A8A8D`, `#3A4045`, `#272727`), spacing steps 8 and 16, and radii 10, 20 for image areas, 20 for cards and 20 for the top corners of bottom sheets. Tokens SHALL use semantic names (for example surface, border, text secondary) rather than the duplicated numeric grayscale names of the source file. The store name text color (`#3A4045`) and the text color of a field's value (`#3A4045`) SHALL each have their own token, and the image radius, the card radius and the sheet radius SHALL be separate tokens even though they have the same value.
@@ -63,14 +59,3 @@ The design system SHALL provide the text styles found in the design (H2 25/30, P
 #### Scenario: P5 in two weights
 - **WHEN** a consumer reads the two P5 styles
 - **THEN** both have size 11 and line height 16.5, one has weight 500 and the other weight 600
-
-### Requirement: Theme exposes tokens through the app theme
-The design system SHALL provide a theme that applies the tokens to the Material theme and makes them retrievable from any widget's build context.
-
-#### Scenario: Tokens available in context
-- **WHEN** an app is built with the design system theme
-- **THEN** a widget can read every foundation token from its build context
-
-#### Scenario: Missing theme
-- **WHEN** a design system widget is built without the design system theme in scope
-- **THEN** the failure is explicit (an assertion or clear error), not a silent fallback to arbitrary values

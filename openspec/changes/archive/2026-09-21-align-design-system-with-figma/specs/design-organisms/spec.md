@@ -1,10 +1,6 @@
-# design-organisms Specification
+# Spec Delta
 
-## Purpose
-
-Provides bottom sheet organisms assembled from design system atoms and tokens, with all their content supplied by the caller, and a way to open each one as a modal.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Bottom sheet frame
 Every bottom sheet organism SHALL show, on the surface color with rounded top corners, a handle centered at the top, a title centered below it and a close button at the top right, followed by the sheet content. The handle SHALL use the disabled text color at 40% opacity, as in Figma. The title SHALL be supplied by the caller and the close button SHALL call the close callback. The frame SHALL take the full width its parent offers and its height SHALL follow its content.
@@ -128,61 +124,3 @@ The design system SHALL provide a sort bottom sheet containing, in a white round
 #### Scenario: Row height
 - **WHEN** a sort sheet is shown with four options
 - **THEN** each option row is 64 logical pixels tall and the card is 256 logical pixels tall
-
-### Requirement: Opening a bottom sheet as a modal
-Each bottom sheet organism SHALL offer a way to open it as a modal bottom sheet from a build context. The modal SHALL appear from the bottom over a backdrop dimmed with the overlay color, SHALL show no surface behind the rounded top corners, SHALL scroll when it is taller than the available space and SHALL stay above the on-screen keyboard. The modal SHALL close when the user taps the close button, taps the backdrop or drags the sheet down, and in each of these three cases the close callback given by the caller SHALL be invoked once, as soon as the modal is dismissed (while it starts to close). For the sort sheet, choosing an option SHALL show it as selected and, after a short delay (about 300 ms) so that the user sees the choice, close the modal and return the chosen value without invoking the close callback; choosing another option during the delay SHALL replace the choice and restart the delay, and dismissing the modal during the delay SHALL return no value and invoke the close callback once. For the filters sheet, the apply button SHALL invoke its callback and then close the modal without invoking the close callback, and the clear button SHALL invoke its callback without closing it.
-
-#### Scenario: Close button
-- **WHEN** a bottom sheet is opened as a modal and the user taps the close button
-- **THEN** the modal closes, returns no value, and the close callback is invoked once
-
-#### Scenario: Backdrop tap
-- **WHEN** the user taps the backdrop of a bottom sheet opened as a modal
-- **THEN** the modal closes and the close callback is invoked once
-
-#### Scenario: Drag down
-- **WHEN** the user drags a bottom sheet opened as a modal down to dismiss it
-- **THEN** the modal closes and the close callback is invoked once
-
-#### Scenario: Sort shows the choice before closing
-- **WHEN** the user chooses an option in a sort sheet opened as a modal
-- **THEN** the option is shown as selected while the modal is still open
-
-#### Scenario: Sort returns the choice
-- **WHEN** the user has chosen an option in a sort sheet opened as a modal and the short delay has passed
-- **THEN** the modal closes, returns that option's value, and the close callback is not invoked
-
-#### Scenario: Choosing again during the delay
-- **WHEN** the user chooses another option before the delay has passed
-- **THEN** the modal stays open until the delay after the last choice has passed, and returns the last chosen value
-
-#### Scenario: Dismissed during the delay
-- **WHEN** the user dismisses the modal after choosing an option but before the delay has passed
-- **THEN** the modal returns no value and the close callback is invoked once
-
-#### Scenario: Filters apply
-- **WHEN** the user taps apply in a filters sheet opened as a modal
-- **THEN** the apply callback is invoked, the modal closes, and the close callback is not invoked
-
-#### Scenario: Filters clear
-- **WHEN** the user taps clear in a filters sheet opened as a modal
-- **THEN** the clear callback is invoked and the modal stays open
-
-#### Scenario: Keyboard
-- **WHEN** the keyboard is shown while the user types in a price field of a filters sheet opened as a modal
-- **THEN** the sheet content stays above the keyboard
-
-#### Scenario: Backdrop color
-- **WHEN** a bottom sheet is opened as a modal
-- **THEN** the screen behind it is dimmed with the overlay color, and no surface shows behind the rounded corners
-
-### Requirement: Organisms reuse existing components
-An organism SHALL be composed from existing atoms, molecules and tokens. It SHALL NOT introduce a widget or a token that duplicates an existing one, and the frame shared by the bottom sheets SHALL NOT be part of the public API.
-
-#### Scenario: Existing components
-- **WHEN** a bottom sheet needs an input, a button, a radio option, a divider or an icon
-- **THEN** it uses the design system's existing component for it
-
-#### Scenario: Frame is internal
-- **WHEN** a consumer imports the design system
-- **THEN** no generic bottom sheet frame is available, only the filters and sort sheets

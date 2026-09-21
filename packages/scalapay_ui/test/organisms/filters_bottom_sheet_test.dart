@@ -262,12 +262,35 @@ void main() {
       // Sheet padding 16 + card padding 16 on each side.
       expect(tester.getTopLeft(first).dx, 32);
       expect(tester.getTopRight(second).dx, width - 32);
-      // Dash area: 11px dash with 8 on each side.
+      // Dash area: 10px dash with 8 on each side.
       expect(
         tester.getTopLeft(second).dx - tester.getTopRight(first).dx,
-        11 + 2 * 8,
+        10 + 2 * 8,
       );
     }
+  });
+
+  testWidgets('the price card is 126 tall without an error message', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_host(_sheet()));
+    // The price card is the nearest ancestor DecoratedBox of its title (the
+    // frame's own surface DecoratedBox is further up).
+    final card = find
+        .ancestor(
+          of: find.text('Fascia di prezzo'),
+          matching: find.byType(DecoratedBox),
+        )
+        .first;
+    // 14 top + 24 title row + 16 gap + 56 field height + 16 bottom.
+    expect(tester.getSize(card).height, 126);
+  });
+
+  testWidgets('the two footer buttons are 6 apart', (tester) async {
+    await tester.pumpWidget(_host(_sheet(onClear: () {}, onApply: () {})));
+    final clear = find.widgetWithText(ScalapayButton, 'Cancella tutto');
+    final apply = find.widgetWithText(ScalapayButton, 'Mostra risultati');
+    expect(tester.getTopLeft(apply).dx - tester.getTopRight(clear).dx, 6);
   });
 
   testWidgets('its height follows the content in a tall parent', (

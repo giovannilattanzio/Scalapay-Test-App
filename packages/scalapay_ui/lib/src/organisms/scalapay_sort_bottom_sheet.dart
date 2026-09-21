@@ -32,6 +32,12 @@ class ScalapaySortBottomSheet<T> extends StatelessWidget {
   final ValueChanged<T>? onChanged;
   final VoidCallback? onClose;
 
+  // Measured on the Figma frame (no token): height of each option row.
+  static const _rowHeight = 64.0;
+  // Measured on the Figma frame (no token): card horizontal padding (was s
+  // = 16).
+  static const _cardHorizontalPadding = 15.0;
+
   /// Opens the sheet as a modal bottom sheet and returns the chosen value.
   ///
   /// Choosing an option shows it as selected and, after a short delay, closes
@@ -69,23 +75,33 @@ class ScalapaySortBottomSheet<T> extends StatelessWidget {
             borderRadius: BorderRadius.circular(t.radius.card),
           ),
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: t.spacing.s),
+            padding: const EdgeInsets.symmetric(
+              horizontal: _cardHorizontalPadding,
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                for (var i = 0; i < entries.length; i++) ...[
-                  if (i > 0) const ScalapayDivider(),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: t.spacing.xs),
-                    child: ScalapayRadio<T>(
-                      value: entries[i].key,
-                      groupValue: selected,
-                      label: entries[i].value,
-                      onChanged: (value) => onChanged?.call(value),
+                for (var i = 0; i < entries.length; i++)
+                  SizedBox(
+                    height: _rowHeight,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          child: Center(
+                            child: ScalapayRadio<T>(
+                              value: entries[i].key,
+                              groupValue: selected,
+                              label: entries[i].value,
+                              onChanged: (value) => onChanged?.call(value),
+                            ),
+                          ),
+                        ),
+                        if (i < entries.length - 1) const ScalapayDivider(),
+                      ],
                     ),
                   ),
-                ],
               ],
             ),
           ),

@@ -20,6 +20,10 @@ class ScalapayRadio<T> extends StatelessWidget {
 
   bool get _selected => value == groupValue;
 
+  // The 24px ring box plus this gap puts the label 34px from the option's
+  // left edge, matching Figma. No spacing token matches this measured value.
+  static const _labelGap = 10.0;
+
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
@@ -34,35 +38,41 @@ class ScalapayRadio<T> extends StatelessWidget {
           constraints: const BoxConstraints(minHeight: 48),
           child: Row(
             children: [
-              Container(
-                width: 20,
-                height: 20,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: _selected
-                        ? t.colors.primary
-                        : t.colors.primary.withValues(alpha: 0.25),
-                    width: 2,
+              SizedBox(
+                width: 24,
+                height: 24,
+                child: Center(
+                  child: Container(
+                    width: 20,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: _selected
+                            ? t.colors.primary
+                            : t.colors.primaryMuted,
+                        width: 2,
+                      ),
+                    ),
+                    child: _selected
+                        ? Center(
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: t.colors.primary,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const SizedBox(width: 10, height: 10),
+                            ),
+                          )
+                        : null,
                   ),
                 ),
-                child: _selected
-                    ? Center(
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: t.colors.primary,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const SizedBox(width: 10, height: 10),
-                        ),
-                      )
-                    : null,
               ),
-              SizedBox(width: t.spacing.xs + 4),
+              const SizedBox(width: _labelGap),
               Expanded(
                 child: Text(
                   label,
-                  style: t.typography.p3Medium.copyWith(
+                  style: t.typography.p2Medium.copyWith(
                     color: t.colors.textPrimary,
                   ),
                 ),

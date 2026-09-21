@@ -29,6 +29,13 @@ class ScalapayTypography {
       height: 21 / 14,
       fontWeight: FontWeight.w600,
     ),
+    this.p2Medium = const TextStyle(
+      fontFamily: _family,
+      package: _package,
+      fontSize: 14,
+      height: 22.4 / 14,
+      fontWeight: FontWeight.w500,
+    ),
     this.p3 = const TextStyle(
       fontFamily: _family,
       package: _package,
@@ -79,6 +86,7 @@ class ScalapayTypography {
   final TextStyle h2; // Mobile/H2/600 - Semibold, 25 / 30
   final TextStyle p1; // Mobile/P1/600 - Semibold, 15
   final TextStyle p2; // Mobile/P2/600 - Semibold, 14 / 21
+  final TextStyle p2Medium; // Mobile/P2/500 - Medium, 14 / 22.4
   final TextStyle p3; // Mobile/P3/600 - Semibold, 13 / 20
   final TextStyle p3Medium; // Mobile/P3/500 - Medium, 13
   final TextStyle p4; // Mobile/P4/500 - Medium, 12
@@ -91,6 +99,7 @@ class ScalapayTypography {
         h2: TextStyle.lerp(h2, other.h2, t)!,
         p1: TextStyle.lerp(p1, other.p1, t)!,
         p2: TextStyle.lerp(p2, other.p2, t)!,
+        p2Medium: TextStyle.lerp(p2Medium, other.p2Medium, t)!,
         p3: TextStyle.lerp(p3, other.p3, t)!,
         p3Medium: TextStyle.lerp(p3Medium, other.p3Medium, t)!,
         p4: TextStyle.lerp(p4, other.p4, t)!,
@@ -103,6 +112,7 @@ class ScalapayTypography {
     'h2': h2,
     'p1': p1,
     'p2': p2,
+    'p2Medium': p2Medium,
     'p3': p3,
     'p3Medium': p3Medium,
     'p4': p4,

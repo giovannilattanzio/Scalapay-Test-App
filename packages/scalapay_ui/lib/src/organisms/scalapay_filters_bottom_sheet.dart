@@ -51,6 +51,10 @@ class ScalapayFiltersBottomSheet extends StatelessWidget {
   final VoidCallback? onClear;
   final VoidCallback? onApply;
 
+  // Measured on the Figma frame (no token): gap between the footer buttons
+  // (was xs = 8).
+  static const _footerButtonGap = 6.0;
+
   /// Opens the sheet as a modal bottom sheet.
   ///
   /// Closing it with the close button, a tap on the backdrop or a drag down
@@ -132,7 +136,7 @@ class ScalapayFiltersBottomSheet extends StatelessWidget {
                     onPressed: onClear,
                   ),
                 ),
-                SizedBox(width: t.spacing.xs),
+                SizedBox(width: _footerButtonGap),
                 Expanded(
                   child: ScalapayButton(label: applyLabel, onPressed: onApply),
                 ),
@@ -162,8 +166,13 @@ class _PriceCard extends StatelessWidget {
   final TextEditingController? maxController;
   final String? error;
 
-  // Measured on the Figma frame (no token): width of the dash between fields.
-  static const _dashWidth = 11.0;
+  // Measured on the Figma frame (no token): width of the dash between fields
+  // (was 11).
+  static const _dashWidth = 10.0;
+  // Measured on the Figma frame (no token): card top padding (was s = 16).
+  static const _cardTopPadding = 14.0;
+  // Measured on the Figma frame (no token): height of the price title row.
+  static const _titleBoxHeight = 24.0;
   static const _keyboard = TextInputType.numberWithOptions(decimal: true);
   static const _formatters = [DecimalInputFormatter()];
 
@@ -176,15 +185,26 @@ class _PriceCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(t.radius.card),
       ),
       child: Padding(
-        padding: EdgeInsets.all(t.spacing.s),
+        padding: EdgeInsets.fromLTRB(
+          t.spacing.s,
+          _cardTopPadding,
+          t.spacing.s,
+          t.spacing.s,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: t.typography.p3Medium.copyWith(
-                color: t.colors.textPrimary,
+            SizedBox(
+              height: _titleBoxHeight,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  title,
+                  style: t.typography.p3Medium.copyWith(
+                    color: t.colors.textPrimary,
+                  ),
+                ),
               ),
             ),
             SizedBox(height: t.spacing.s),

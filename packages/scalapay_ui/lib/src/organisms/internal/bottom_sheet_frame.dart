@@ -67,7 +67,7 @@ class BottomSheetFrame extends StatelessWidget {
                       height: _handleHeight,
                       child: DecoratedBox(
                         decoration: BoxDecoration(
-                          color: t.colors.textDisabled.withValues(alpha: 0.5),
+                          color: t.colors.textDisabled.withValues(alpha: 0.4),
                           borderRadius: BorderRadius.circular(
                             _handleHeight / 2,
                           ),

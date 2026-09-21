@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -119,6 +120,24 @@ void main() {
     });
   });
 
+  group('ScalapayButton horizontal padding', () {
+    for (final variant in ScalapayButtonVariant.values) {
+      testWidgets('${variant.name} width equals label width + 32', (
+        tester,
+      ) async {
+        const label = 'Go';
+        await tester.pumpWidget(
+          _host(
+            ScalapayButton(variant: variant, label: label, onPressed: () {}),
+          ),
+        );
+        final buttonWidth = tester.getSize(find.byType(ScalapayButton)).width;
+        final labelWidth = tester.getSize(find.text(label)).width;
+        expect(buttonWidth, closeTo(labelWidth + 32, 0.5));
+      });
+    }
+  });
+
   group('ScalapayButton height', () {
     for (final variant in ScalapayButtonVariant.values) {
       testWidgets(
@@ -151,6 +170,40 @@ void main() {
     await tester.tap(find.text('Filtri'));
     expect(taps, 1);
     expect(find.byType(ScalapayIcon), findsOneWidget);
+  });
+
+  group('ScalapayFilterChip layout', () {
+    testWidgets('filter icon is 20, chip width is label width + 40', (
+      tester,
+    ) async {
+      const label = 'Filtri';
+      await tester.pumpWidget(
+        _host(
+          const ScalapayFilterChip(label: label, icon: ScalapayIconData.filter),
+        ),
+      );
+      final chipWidth = tester.getSize(find.byType(ScalapayFilterChip)).width;
+      final labelWidth = tester.getSize(find.text(label)).width;
+      expect(chipWidth, closeTo(labelWidth + 40, 0.5));
+      expect(tester.getSize(find.byType(ScalapayIcon)).width, 20);
+      expect(tester.getSize(find.byType(ScalapayFilterChip)).height, 32);
+    });
+
+    testWidgets('order icon is 24, chip width is label width + 36', (
+      tester,
+    ) async {
+      const label = 'Ordina';
+      await tester.pumpWidget(
+        _host(
+          const ScalapayFilterChip(label: label, icon: ScalapayIconData.order),
+        ),
+      );
+      final chipWidth = tester.getSize(find.byType(ScalapayFilterChip)).width;
+      final labelWidth = tester.getSize(find.text(label)).width;
+      expect(chipWidth, closeTo(labelWidth + 36, 0.5));
+      expect(tester.getSize(find.byType(ScalapayIcon)).width, 24);
+      expect(tester.getSize(find.byType(ScalapayFilterChip)).height, 32);
+    });
   });
 
   group('ScalapaySearchField', () {
@@ -234,6 +287,29 @@ void main() {
       expect(after, lessThan(before));
     });
 
+    testWidgets('floated label renders at 11 (P5), not scaled down further', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _host(
+          const SizedBox(width: 200, child: ScalapayTextField(label: 'Minimo')),
+        ),
+      );
+      await tester.enterText(find.byType(TextField), '150');
+      await tester.pumpAndSettle();
+      final renderParagraph = tester.renderObject<RenderParagraph>(
+        find.text('Minimo'),
+      );
+      final textSpan = renderParagraph.text as TextSpan;
+      final styledFontSize = textSpan.style!.fontSize!;
+      // InputDecorator paints the floated label through a Transform (its
+      // private `_kFinalLabelScale`), so the style's fontSize alone does not
+      // reflect what is actually rendered: multiply by the scale applied to
+      // the RenderParagraph to get the true on-screen size.
+      final scale = renderParagraph.getTransformTo(null).getMaxScaleOnAxis();
+      expect(styledFontSize * scale, closeTo(11, 0.1));
+    });
+
     testWidgets('shows the error message', (tester) async {
       await tester.pumpWidget(
         _host(
@@ -246,6 +322,36 @@ void main() {
       expect(find.text('Non valido'), findsOneWidget);
       final style = tester.widget<Text>(find.text('Non valido')).style!;
       expect(style.color, const ScalapayColors().error);
+    });
+
+    testWidgets('is 56 tall when empty and without an error', (tester) async {
+      await tester.pumpWidget(
+        _host(
+          const SizedBox(width: 200, child: ScalapayTextField(label: 'Minimo')),
+        ),
+      );
+      expect(tester.getSize(find.byType(ScalapayTextField)).height, 56);
+    });
+
+    testWidgets('is 56 tall when filled and without an error', (tester) async {
+      await tester.pumpWidget(
+        _host(
+          const SizedBox(width: 200, child: ScalapayTextField(label: 'Minimo')),
+        ),
+      );
+      await tester.enterText(find.byType(TextField), '150');
+      await tester.pumpAndSettle();
+      expect(tester.getSize(find.byType(ScalapayTextField)).height, 56);
+    });
+
+    testWidgets('value text uses the textInput color', (tester) async {
+      await tester.pumpWidget(
+        _host(
+          const SizedBox(width: 200, child: ScalapayTextField(label: 'Minimo')),
+        ),
+      );
+      final style = tester.widget<TextField>(find.byType(TextField)).style!;
+      expect(style.color, const Color(0xFF3A4045));
     });
   });
 
@@ -291,6 +397,48 @@ void main() {
           isChecked: true,
         ),
       );
+    });
+
+    testWidgets('label starts 34px from the option left edge in P2 Medium', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _host(
+          ScalapayRadio<String>(
+            value: 'asc',
+            groupValue: 'asc',
+            label: 'Prezzo crescente',
+            onChanged: (_) {},
+          ),
+        ),
+      );
+      final optionLeft = tester
+          .getTopLeft(find.byType(ScalapayRadio<String>))
+          .dx;
+      final labelLeft = tester.getTopLeft(find.text('Prezzo crescente')).dx;
+      expect(labelLeft - optionLeft, 34);
+      expect(
+        tester.widget<Text>(find.text('Prezzo crescente')).style,
+        const ScalapayTypography().p2Medium.copyWith(
+          color: const ScalapayColors().textPrimary,
+        ),
+      );
+    });
+
+    testWidgets('unselected ring uses the primaryMuted color', (tester) async {
+      await tester.pumpWidget(
+        _host(
+          ScalapayRadio<String>(
+            value: 'asc',
+            groupValue: 'desc',
+            label: 'Prezzo crescente',
+            onChanged: (_) {},
+          ),
+        ),
+      );
+      final container = tester.widget<Container>(find.byType(Container));
+      final decoration = container.decoration! as BoxDecoration;
+      expect(decoration.border!.top.color, const Color(0xFFCACCF2));
     });
   });
 

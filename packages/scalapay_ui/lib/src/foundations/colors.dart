@@ -9,6 +9,9 @@ class ScalapayColors {
   const ScalapayColors({
     this.primary = const Color(0xFF5666F0), // Brand/Colors/Core/Lilac/900
     this.onPrimary = const Color(0xFFFFFFFF), // Typography/Buttons/Active/White
+    this.primaryMuted = const Color(
+      0xFFCACCF2,
+    ), // UI/Buttons/Lightweight/Lillac/Hover
     this.background = const Color(0xFFFFFFFF), // UI/Grayscale/100 - White
     this.surface = const Color(
       0xFFF6F7FB,
@@ -17,6 +20,9 @@ class ScalapayColors {
     this.textPrimary = const Color(0xFF272727), // UI/Grayscale/900 - Black Dark
     this.textSecondary = const Color(0xFF8A8A8D), // UI/Grayscale/700
     this.textStoreName = const Color(0xFF3A4045), // UI/Grayscale/850 - Black
+    // Same value as `textStoreName`, different role: the color of a text
+    // field's value, not the store name text.
+    this.textInput = const Color(0xFF3A4045), // UI/Grayscale/850
     this.textDisabled = const Color(
       0xFF9E9E9E,
     ), // UI/Grayscale/600 (assumed role)
@@ -26,12 +32,14 @@ class ScalapayColors {
 
   final Color primary;
   final Color onPrimary;
+  final Color primaryMuted;
   final Color background;
   final Color surface;
   final Color border;
   final Color textPrimary;
   final Color textSecondary;
   final Color textStoreName;
+  final Color textInput;
   final Color textDisabled;
   final Color overlay;
   final Color error;
@@ -39,12 +47,14 @@ class ScalapayColors {
   ScalapayColors lerp(ScalapayColors other, double t) => ScalapayColors(
     primary: Color.lerp(primary, other.primary, t)!,
     onPrimary: Color.lerp(onPrimary, other.onPrimary, t)!,
+    primaryMuted: Color.lerp(primaryMuted, other.primaryMuted, t)!,
     background: Color.lerp(background, other.background, t)!,
     surface: Color.lerp(surface, other.surface, t)!,
     border: Color.lerp(border, other.border, t)!,
     textPrimary: Color.lerp(textPrimary, other.textPrimary, t)!,
     textSecondary: Color.lerp(textSecondary, other.textSecondary, t)!,
     textStoreName: Color.lerp(textStoreName, other.textStoreName, t)!,
+    textInput: Color.lerp(textInput, other.textInput, t)!,
     textDisabled: Color.lerp(textDisabled, other.textDisabled, t)!,
     overlay: Color.lerp(overlay, other.overlay, t)!,
     error: Color.lerp(error, other.error, t)!,
@@ -54,12 +64,14 @@ class ScalapayColors {
   Map<String, Color> get entries => {
     'primary': primary,
     'onPrimary': onPrimary,
+    'primaryMuted': primaryMuted,
     'background': background,
     'surface': surface,
     'border': border,
     'textPrimary': textPrimary,
     'textSecondary': textSecondary,
     'textStoreName': textStoreName,
+    'textInput': textInput,
     'textDisabled': textDisabled,
     'overlay': overlay,
     'error': error,

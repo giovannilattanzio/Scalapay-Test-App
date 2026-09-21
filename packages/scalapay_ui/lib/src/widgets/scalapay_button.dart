@@ -31,16 +31,14 @@ class ScalapayButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.tokens;
     final enabled = onPressed != null;
-    final (background, foreground, horizontalPadding) = switch (variant) {
+    final (background, foreground) = switch (variant) {
       ScalapayButtonVariant.primary => (
         enabled ? t.colors.primary : t.colors.border,
         enabled ? t.colors.onPrimary : t.colors.textDisabled,
-        t.spacing.s * 1.5,
       ),
       ScalapayButtonVariant.tertiary => (
         null,
         enabled ? t.colors.primary : t.colors.textDisabled,
-        t.spacing.xs,
       ),
     };
     return Semantics(
@@ -61,7 +59,7 @@ class ScalapayButton extends StatelessWidget {
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 44, minWidth: 48),
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+              padding: EdgeInsets.symmetric(horizontal: t.spacing.s),
               child: Center(
                 widthFactor: 1,
                 heightFactor: 1,

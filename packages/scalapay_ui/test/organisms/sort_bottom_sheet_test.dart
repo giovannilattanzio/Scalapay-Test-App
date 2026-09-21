@@ -107,6 +107,20 @@ void main() {
     expect(calls, isEmpty);
   });
 
+  testWidgets('each row is 64 tall and a four-option card is 256 tall', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_host(_sheet()));
+    final rows = find.byWidgetPredicate((w) => w is SizedBox && w.height == 64);
+    expect(rows, findsNWidgets(4));
+
+    final radios = find.byType(ScalapayRadio<_Sort>);
+    final card = find
+        .ancestor(of: radios.first, matching: find.byType(DecoratedBox))
+        .first;
+    expect(tester.getSize(card).height, 256);
+  });
+
   testWidgets('dividers separate the options and none follows the last', (
     tester,
   ) async {
