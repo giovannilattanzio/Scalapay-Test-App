@@ -30,3 +30,7 @@ For code tasks outside OpenSpec, use the `flutter-orchestrator` skill directly. 
 - Format / analyze / test: `dart format lib test`, `flutter analyze`, `flutter test` (run in the app and in `packages/scalapay_ui`)
 - Integration tests: `flutter test integration_test -d <device>`, a connected simulator/device (`flutter devices`) — the app has no macOS desktop target, and web is not supported by `integration_test`
 - Widgetbook: in `packages/scalapay_ui/widgetbook`, `dart run build_runner build --delete-conflicting-outputs` then `flutter run -d chrome` (or `-d macos`)
+
+## Commits
+
+Conventional Commits: `type(scope): description`, lowercase, imperative, no trailing period. Types: feat, fix, refactor, test, docs, chore, build, ci, perf, style, revert. Scope is the feature or package (`feat(catalog): add product search`, `fix(scalapay_ui): correct card padding`). Breaking changes: `!` after the type or a `BREAKING CHANGE:` footer. Enforced by `.githooks/commit-msg`; enable it once per clone with `git config core.hooksPath .githooks`.
