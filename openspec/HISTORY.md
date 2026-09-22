@@ -20,3 +20,5 @@ One entry per archived change (`/opsx:archive`), oldest first: `- YYYY-MM-DD | <
   16 goldens regenerated, search field confirmed unchanged; synced design-tokens-theme, design-atoms and design-organisms.
 - 2026-09-22 | add-dio-retry-interceptor | Added a hand-written Dio RetryInterceptor on the shared Dio (exponential backoff with full jitter, Retry-After honoured, 1 retry on timeouts / 2 on other transient errors, per-request opt-out/opt-in), wired into `_registerCore()`.
   CatalogCubit now discards results from superseded searches/sorts/filters (widened race window from the retries); synced http-retry (new), generated-api-client and product-catalog.
+- 2026-09-22 | add-catalog-integration-tests | Added an `integration_test` suite driving the real `CatalogPage`/`CatalogCubit`/DI graph with only `IProductRepository` faked, covering search, empty/error+retry, sort, filter and pagination journeys; `test_driver/integration_test.dart` shim added, run command documented in CLAUDE.md.
+  Requires `-d <device>` (no macOS desktop target, web unsupported by integration_test); synced catalog-integration-tests (new).
