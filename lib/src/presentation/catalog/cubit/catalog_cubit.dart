@@ -11,6 +11,18 @@ class CatalogCubit extends Cubit<CatalogState> {
 
   final SearchProductsUseCase _searchProducts;
 
+  /// Counts the requests that can invalidate an in-flight one: `search`,
+  /// `changeSort`, `applyPriceRange` and a first-page `retry`. `_loadFirstPage`
+  /// and `_appendNextPage` capture it before awaiting the use case and drop
+  /// their result without emitting if it no longer matches when the result
+  /// arrives, so a slow, superseded request (widened by the retry
+  /// interceptor's backoff, see `add-dio-retry-interceptor` design decision 8)
+  /// can never overwrite newer results on screen. `loadMore` and the
+  /// loadMore-failure branch of `retry` resume the current request rather
+  /// than starting a new "latest" one, so they reuse the existing generation
+  /// instead of incrementing it.
+  int _generation = 0;
+
   /// Called from the widget tree on every dependency change, so it must stay
   /// cheap and a no-op when the language has not actually changed. Does not
   /// re-run the current search: a language switch is applied to the next
@@ -24,6 +36,7 @@ class CatalogCubit extends Cubit<CatalogState> {
     final trimmed = query.trim();
     if (trimmed.isEmpty) return;
 
+    _generation++;
     emit(
       state.copyWith(
         query: trimmed,
@@ -39,6 +52,7 @@ class CatalogCubit extends Cubit<CatalogState> {
   Future<void> changeSort(ProductSort sort) async {
     if (sort == state.sort) return;
 
+    _generation++;
     emit(
       state.copyWith(
         sort: sort,
@@ -58,6 +72,7 @@ class CatalogCubit extends Cubit<CatalogState> {
   Future<void> applyPriceRange(PriceRange range) async {
     if (range.isInverted) return;
 
+    _generation++;
     emit(
       state.copyWith(
         priceRange: range,
@@ -80,17 +95,22 @@ class CatalogCubit extends Cubit<CatalogState> {
   /// redoes `loadMore` for the same page.
   Future<void> retry() async {
     if (state.status == CatalogStatus.failure) {
+      _generation++;
       emit(state.copyWith(status: CatalogStatus.loading, failure: null));
       await _loadFirstPage();
     } else if (state.loadMoreStatus == LoadMoreStatus.failure) {
+      // Resumes the same page of the current request rather than starting a
+      // new "latest" one, so it deliberately does not bump `_generation`.
       await _appendNextPage();
     }
   }
 
   Future<void> _loadFirstPage() async {
+    final generation = _generation;
     final result = await _searchProducts(params: _paramsFor(kDefaultPage));
     result.fold(
       (searchResult) {
+        if (generation != _generation) return;
         final pages = state.pages.append(
           searchResult.products,
           perPage: state.perPage,
@@ -104,8 +124,10 @@ class CatalogCubit extends Cubit<CatalogState> {
           ),
         );
       },
-      (failure) =>
-          emit(state.copyWith(status: CatalogStatus.failure, failure: failure)),
+      (failure) {
+        if (generation != _generation) return;
+        emit(state.copyWith(status: CatalogStatus.failure, failure: failure));
+      },
     );
   }
 
@@ -116,11 +138,13 @@ class CatalogCubit extends Cubit<CatalogState> {
   /// screen untouched.
   Future<void> _appendNextPage() async {
     emit(state.copyWith(loadMoreStatus: LoadMoreStatus.loading));
+    final generation = _generation;
     final result = await _searchProducts(
       params: _paramsFor(state.pages.nextPage),
     );
     result.fold(
       (searchResult) {
+        if (generation != _generation) return;
         final pages = state.pages.append(
           searchResult.products,
           perPage: state.perPage,
@@ -134,7 +158,10 @@ class CatalogCubit extends Cubit<CatalogState> {
           ),
         );
       },
-      (failure) => emit(state.copyWith(loadMoreStatus: LoadMoreStatus.failure)),
+      (failure) {
+        if (generation != _generation) return;
+        emit(state.copyWith(loadMoreStatus: LoadMoreStatus.failure));
+      },
     );
   }
 

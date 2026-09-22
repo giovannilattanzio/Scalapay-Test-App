@@ -70,6 +70,7 @@ void main() {
       expect(identical(catalogApi.dio, dio), isTrue);
       expect(dio.options.connectTimeout, const Duration(seconds: 15));
       expect(dio.options.receiveTimeout, const Duration(seconds: 15));
+      expect(dio.interceptors.whereType<RetryInterceptor>(), hasLength(1));
     });
 
     test('ProductsApi resolves from the registered CatalogApi', () async {
@@ -130,13 +131,17 @@ void main() {
           const ProductSearchParams(query: 'nike'),
         );
 
-        expect(recordingAdapter.requestedUris, hasLength(1));
-        final uri = recordingAdapter.requestedUris.single;
-
-        expect(uri.hasScheme, isTrue);
-        expect(uri.host, isNotEmpty);
-        expect(uri.toString(), startsWith(CatalogApi.basePath));
-        expect(uri.path, '/v1/products/search');
+        // The adapter always fails with a connectionError, which
+        // RetryInterceptor retries against the same `Dio`, so more than one
+        // identical request is expected here; every one of them must still
+        // be the same absolute URL.
+        expect(recordingAdapter.requestedUris, isNotEmpty);
+        for (final uri in recordingAdapter.requestedUris) {
+          expect(uri.hasScheme, isTrue);
+          expect(uri.host, isNotEmpty);
+          expect(uri.toString(), startsWith(CatalogApi.basePath));
+          expect(uri.path, '/v1/products/search');
+        }
       },
     );
   });

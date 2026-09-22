@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -450,5 +452,125 @@ void main() {
       verify: (_) =>
           verifyNever(() => useCase.call(params: any(named: 'params'))),
     );
+  });
+
+  // Ordering-sensitive: two overlapping requests must resolve in a chosen
+  // order, which a single blocTest `act` cannot express against a use case
+  // mocked to resolve immediately. These use a plain `test()` with one
+  // `Completer` per call, queued in call order, so each request's result is
+  // released independently.
+  group('superseded requests', () {
+    void mockSequence(List<Completer<Result<ProductSearchResult>>> queue) {
+      final pending = List.of(queue);
+      when(() => useCase.call(params: any(named: 'params')))
+          .thenAnswer((_) => pending.removeAt(0).future);
+    }
+
+    test(
+      'a late search result is dropped once a newer search has started',
+      () async {
+        final completerA = Completer<Result<ProductSearchResult>>();
+        final completerB = Completer<Result<ProductSearchResult>>();
+        mockSequence([completerA, completerB]);
+
+        final cubit = CatalogCubit(useCase);
+        addTearDown(cubit.close);
+        final states = <CatalogState>[];
+        final subscription = cubit.stream.listen(states.add);
+        addTearDown(subscription.cancel);
+
+        final futureA = cubit.search('a');
+        final futureB = cubit.search('b');
+
+        // The stale request resolves first, after the newer one is already
+        // in flight.
+        completerA.complete(_success([_product('a1')]));
+        await futureA;
+
+        completerB.complete(_success([_product('b1')]));
+        await futureB;
+
+        expect(cubit.state.status, CatalogStatus.success);
+        expect(cubit.state.products.map((p) => p.id), ['b1']);
+        expect(
+          states.any((s) => s.products.map((p) => p.id).contains('a1')),
+          isFalse,
+          reason: "'a's late products must never appear, even transiently",
+        );
+      },
+    );
+
+    test('a late search failure is dropped once a newer search already '
+        'succeeded', () async {
+      final completerA = Completer<Result<ProductSearchResult>>();
+      final completerB = Completer<Result<ProductSearchResult>>();
+      mockSequence([completerA, completerB]);
+
+      final cubit = CatalogCubit(useCase);
+      addTearDown(cubit.close);
+      final states = <CatalogState>[];
+      final subscription = cubit.stream.listen(states.add);
+      addTearDown(subscription.cancel);
+
+      final futureA = cubit.search('a');
+      final futureB = cubit.search('b');
+
+      completerB.complete(_success([_product('b1')]));
+      await futureB;
+
+      // The stale request fails after the newer one already succeeded.
+      completerA.complete(const Result.error(_failure));
+      await futureA;
+
+      expect(cubit.state.status, CatalogStatus.success);
+      expect(cubit.state.products.map((p) => p.id), ['b1']);
+      expect(
+        states.any((s) => s.status == CatalogStatus.failure),
+        isFalse,
+        reason: 'a superseded failure must never surface',
+      );
+    });
+
+    test('a late loadMore result is dropped once a sort change restarted the '
+        'results', () async {
+      final completerFirst = Completer<Result<ProductSearchResult>>();
+      final completerLoadMore = Completer<Result<ProductSearchResult>>();
+      final completerSort = Completer<Result<ProductSearchResult>>();
+      mockSequence([completerFirst, completerLoadMore, completerSort]);
+
+      final cubit = CatalogCubit(useCase);
+      addTearDown(cubit.close);
+
+      final searchFuture = cubit.search('nike');
+      // A full page (perPage products) so `hasReachedEnd` stays false and
+      // `loadMore` is allowed to run.
+      final firstPage = List.generate(kDefaultPerPage, (i) => _product('$i'));
+      completerFirst.complete(_success(firstPage));
+      await searchFuture;
+
+      final loadMoreFuture = cubit.loadMore();
+      expect(cubit.state.loadMoreStatus, LoadMoreStatus.loading);
+
+      final sortFuture = cubit.changeSort(ProductSort.priceAsc);
+      // changeSort already resets loadMoreStatus to idle for the new
+      // ordering, before the stale loadMore result ever arrives.
+      expect(cubit.state.loadMoreStatus, LoadMoreStatus.idle);
+
+      completerLoadMore.complete(_success([_product('3')], page: 2));
+      await loadMoreFuture;
+
+      expect(
+        cubit.state.loadMoreStatus,
+        LoadMoreStatus.idle,
+        reason: 'the dropped result must not overwrite the reset status',
+      );
+      expect(cubit.state.products.any((p) => p.id == '3'), isFalse);
+
+      completerSort.complete(_success([_product('9')]));
+      await sortFuture;
+
+      expect(cubit.state.status, CatalogStatus.success);
+      expect(cubit.state.products.map((p) => p.id), ['9']);
+    });
   });
 }

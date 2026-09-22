@@ -21,15 +21,17 @@ void _registerCore() {
   // timeouts, that branch never runs, so `baseUrl` must be set here. This is
   // safe with exactly one backend; a second API on a different host would
   // need the shared `Dio` split rather than another `baseUrl`.
-  injector.registerLazySingleton<Dio>(
-    () => Dio(
+  injector.registerLazySingleton<Dio>(() {
+    final dio = Dio(
       BaseOptions(
         baseUrl: CatalogApi.basePath,
         connectTimeout: const Duration(seconds: 15),
         receiveTimeout: const Duration(seconds: 15),
       ),
-    ),
-  );
+    );
+    dio.interceptors.add(RetryInterceptor(dio));
+    return dio;
+  });
 }
 
 void _registerCatalog() {
