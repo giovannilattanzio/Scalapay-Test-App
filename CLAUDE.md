@@ -28,7 +28,7 @@ For code tasks outside OpenSpec, use the `flutter-orchestrator` skill directly. 
 
 - Codegen: `dart run build_runner build --delete-conflicting-outputs`
 - Format / analyze / test: `dart format lib test`, `flutter analyze`, `flutter test` (run in the app and in `packages/scalapay_ui`)
-- Integration tests: `flutter test integration_test -d <device>`, a connected simulator/device (`flutter devices`) — the app has no macOS desktop target, and web is not supported by `integration_test`
+- Integration tests: `flutter test integration_test -d <device>`, a connected simulator/device (`flutter devices`) — the app has no macOS desktop or web target
 - Widgetbook: in `packages/scalapay_ui/widgetbook`, `dart run build_runner build --delete-conflicting-outputs` then `flutter run -d chrome` (or `-d macos`)
 
 ## Commits

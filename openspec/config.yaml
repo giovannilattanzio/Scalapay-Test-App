@@ -2,7 +2,7 @@ schema: spec-driven
 
 context: |
   ## Project
-  scalapay_test_app: a single-package Flutter app (Android, iOS, web). Not a monorepo.
+  scalapay_test_app: a single-package Flutter app (Android, iOS). Not a monorepo.
 
   ## Tech Stack
   - Flutter 3.47 / Dart 3.13

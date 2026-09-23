@@ -36,7 +36,7 @@ Future<void> pumpCatalogApp(
 
   // Mirrors main.dart's bootstrap; unlike test/helpers/pump_app.dart this
   // does not swap in a file-based asset loader — integration_test runs on a
-  // full engine (device/simulator/Chrome), not the headless `flutter_test`
+  // full engine (device/simulator), not the headless `flutter_test`
   // binding where the plain `rootBundle` loader was observed to hang.
   SharedPreferences.setMockInitialValues({});
   await EasyLocalization.ensureInitialized();
