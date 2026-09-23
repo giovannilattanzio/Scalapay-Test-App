@@ -24,3 +24,5 @@ One entry per archived change (`/opsx:archive`), oldest first: `- YYYY-MM-DD | <
   Requires `-d <device>` (no macOS desktop target, web unsupported by integration_test); synced catalog-integration-tests (new).
 - 2026-09-23 | improve-accessibility | Made `scalapay_ui` and the catalog screen usable with screen readers and large text: tap actions and localized labels on atoms and sheets, 44px chip target, card read as one element, announced state messages, 200% text (incl. Android non-linear scaling); guideline tests on atoms, sheets, page and every Widgetbook use case, contrast test with documented exceptions, a11y checklist in the design-system and presentation agents.
   Synced design-atoms, design-molecules, design-organisms, design-tokens-theme, design-widgetbook and product-catalog.
+- 2026-09-23 | add-image-decode-cache | Catalog product images are decoded at no more than the card's physical image-area width (`cacheWidth` via `LayoutBuilder`), as a safeguard against larger API photos; today's 300×300 photos are unaffected (48.6 MB for 135 images before and after).
+  `pumpApp` gained `devicePixelRatio` (surfaceSize stays logical); synced product-catalog.

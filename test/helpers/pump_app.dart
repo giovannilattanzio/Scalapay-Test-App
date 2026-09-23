@@ -39,10 +39,16 @@ class _FileAssetLoader extends AssetLoader {
 ///
 /// [surfaceSize] and [textScaleFactor] reproduce the widths (320/375/900) and
 /// the raised system font size the design spec is measured against, without
-/// each test repeating the `tester.view` boilerplate. [textScaler], when
-/// given, is used instead of `TextScaler.linear(textScaleFactor)` — for
-/// example [AndroidNonLinearTextScaler], which reproduces Android 14+'s
-/// non-linear font scale curve that `TextScaler.linear` cannot.
+/// each test repeating the `tester.view` boilerplate. [surfaceSize] is
+/// always a logical size: it is what the widget tree lays out against,
+/// regardless of [devicePixelRatio]. [textScaler], when given, is used
+/// instead of `TextScaler.linear(textScaleFactor)` — for example
+/// [AndroidNonLinearTextScaler], which reproduces Android 14+'s non-linear
+/// font scale curve that `TextScaler.linear` cannot.
+/// [devicePixelRatio] reproduces a device's physical-to-logical pixel ratio
+/// (for example to assert on `cacheWidth`/`ResizeImage` values) without
+/// changing the logical layout: it only changes how many physical pixels
+/// back [surfaceSize]. Defaults to 1 to keep every existing test unchanged.
 Future<void> pumpApp(
   WidgetTester tester,
   Widget child, {
@@ -50,6 +56,7 @@ Future<void> pumpApp(
   Size surfaceSize = const Size(375, 812),
   double textScaleFactor = 1,
   TextScaler? textScaler,
+  double devicePixelRatio = 1,
 }) async {
   TestWidgetsFlutterBinding.ensureInitialized();
   // easy_localization persists the chosen locale through shared_preferences;
@@ -60,8 +67,11 @@ Future<void> pumpApp(
   await EasyLocalization.ensureInitialized();
 
   final view = tester.view;
-  view.physicalSize = surfaceSize;
-  view.devicePixelRatio = 1;
+  // `view.physicalSize` is in physical pixels, so it must scale with
+  // `devicePixelRatio` for `surfaceSize` to stay the logical size the
+  // widget tree lays out against.
+  view.physicalSize = surfaceSize * devicePixelRatio;
+  view.devicePixelRatio = devicePixelRatio;
   addTearDown(view.resetPhysicalSize);
   addTearDown(view.resetDevicePixelRatio);
 

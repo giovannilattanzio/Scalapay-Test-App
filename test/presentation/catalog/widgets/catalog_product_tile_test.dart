@@ -47,4 +47,34 @@ void main() {
     expect(card.installmentCount, Product.installmentCount);
     expect(card.installmentAmount, product.installmentAmount);
   });
+
+  testWidgets(
+    'decodes the network image at the physical width of its display area',
+    (tester) async {
+      await pumpApp(
+        tester,
+        CatalogProductTile(product: _product()),
+        devicePixelRatio: 3,
+      );
+
+      // The image area's width is whatever constraint `Center` passes down
+      // to `LayoutBuilder`, not the (shrink-wrapped) `LayoutBuilder`'s own
+      // size, so it is measured from the nearest `Center` ancestor.
+      final layoutBuilderFinder = find
+          .descendant(
+            of: find.byType(CatalogProductTile),
+            matching: find.byType(LayoutBuilder),
+          )
+          .first;
+      final centerFinder = find
+          .ancestor(of: layoutBuilderFinder, matching: find.byType(Center))
+          .first;
+      final areaWidth = tester.getSize(centerFinder).width;
+      expect(areaWidth, greaterThan(0));
+
+      final image = tester.widget<Image>(find.byType(Image));
+      final resizeImage = image.image as ResizeImage;
+      expect(resizeImage.width, (areaWidth * 3).round());
+    },
+  );
 }
