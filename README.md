@@ -27,6 +27,106 @@ from the live service, in `test/fixtures/`, and the widget tests read the real
 `assets/translations/*.json` from disk rather than a copy, so changing a string
 there makes the tests that assert it fail.
 
+### Coverage
+
+```bash
+# the app: generated code and workspace packages are left out
+flutter test --coverage
+lcov --remove coverage/lcov.info '*.g.dart' 'packages/*' \
+  -o coverage/lcov.filtered.info --ignore-errors unused
+genhtml coverage/lcov.filtered.info -o coverage/html   # open coverage/html/index.html
+
+# the design system
+cd packages/scalapay_ui && flutter test --coverage
+genhtml coverage/lcov.info -o coverage/html
+```
+
+`lcov` and `genhtml` come from `brew install lcov`.
+
+Line coverage from the unit and widget tests, measured on 2026-09-23. Generated
+code (`*.g.dart`, `packages/catalog_api`) is left out:
+
+| Area | Lines covered | Coverage |
+| --- | ---: | ---: |
+| App `lib/src/core` | 31 / 40 | 77.5% |
+| App `lib/src/domain` | 41 / 51 | 80.4% |
+| App `lib/src/data` | 115 / 123 | 93.5% |
+| App `lib/src/presentation` | 319 / 325 | 98.2% |
+| **App total** | **506 / 539** | **93.9%** |
+| `scalapay_ui` foundations + theme | 99 / 101 | 98.0% |
+| `scalapay_ui` atoms, molecules, organisms | 424 / 424 | 100% |
+| **`scalapay_ui` total** | **523 / 525** | **99.6%** |
+
+`lib/main.dart` and `lib/src/config/router/` do not appear in the report because
+no unit or widget test imports them: the integration suite covers them instead.
+
+### What each test covers
+
+**App (`test/`)**
+
+- `widget_test.dart`: boots `CatalogPage` with a mocked use case and checks
+  the title and search field appear.
+- `architecture/layer_boundaries_test.dart`: scans the imports under
+  `domain/` and `presentation/` and fails if either one imports the generated API client.
+- `localization/translations_test.dart`: flattens `it.json` and `en.json` into
+  dotted keys, then checks both have the same keys and no empty values.
+- `core/di/injector_test.dart`: runs `setupInjector` with an offline Dio
+  adapter and checks what each type resolves to, the shared Dio and timeout mapping.
+- `data/catalog/generated_contract_test.dart`: parses the captured fixture
+  with the generated client, so API drift fails offline, not at runtime.
+- `data/catalog/catalog_partner_test.dart`: checks the constant partner id
+  (`scalapayappit`).
+- `data/catalog/product_mapper_test.dart`: maps generated documents onto
+  `Product` and `grouped_hits` onto a flat list, field by field.
+- `data/catalog/product_repository_impl_test.dart`: stubs `ProductsApi` and
+  checks the query arguments sent and how each Dio/parse error maps to a `Failure`.
+- `data/network/retry_interceptor_test.dart`: drives the retry interceptor
+  with a scripted adapter and fake delays: which errors retry, how many times, backoff.
+- `domain/catalog/entities/*_test.dart`: pure unit tests of `PriceRange`, `Product`,
+  `ProductSort` query values and `ProductPageAccumulator` dedup/end-of-list rules.
+- `domain/catalog/usecases/search_products_use_case_test.dart`: with a mocked
+  repository, checks params, product order and failures pass through unchanged.
+- `presentation/catalog/catalog_cubit_test.dart`: `blocTest` on search, sort,
+  filters, loadMore, retry and language with a mocked use case, including stale responses.
+- `presentation/catalog/pages/catalog_view_test.dart`: pumps `CatalogView` on
+  a mocked cubit and checks what each status renders and each failure's message.
+- `presentation/catalog/pages/catalog_bottom_sheets_test.dart`: opens the sort
+  and filter sheets from the chips and checks choose, apply, dismiss, invalid range.
+- `presentation/catalog/pages/catalog_infinite_scroll_test.dart`: drags the
+  grid to the end and checks one `loadMore` per page, the footer and scroll position.
+- `presentation/catalog/pages/catalog_fixed_toolbar_test.dart`: scrolls to the
+  end and checks the Filtri/Ordina chips stay visible and tappable.
+- `presentation/catalog/pages/catalog_bottom_inset_test.dart`: on a notched
+  device, checks the last row can scroll above the home indicator.
+- `presentation/catalog/pages/catalog_large_text_test.dart`: at 200% text,
+  including Android 14's non-linear scaler, checks grid, sheets and chips don't overflow.
+- `presentation/catalog/pages/catalog_page_a11y_test.dart`: runs Flutter's
+  tap-target guidelines on each status and checks each card is one semantics node.
+- `presentation/catalog/widgets/*_test.dart`: tests header, toolbar, message,
+  grid footer, product tile and grid one at a time: content, callbacks, columns, semantics.
+
+**Integration (`integration_test/`, on a device)**
+
+Each test runs the real app with only the repository faked (`support/`) and
+drives one user flow: search, sort, filter, pagination, and error with retry.
+
+**Design system (`packages/scalapay_ui/test/`)**
+
+- `tokens_theme_test.dart`: checks colors, spacing, radii and text styles
+  match Figma, and `context.tokens` fails clearly when no theme is set.
+- `contrast_test.dart`: computes the WCAG contrast of each text color on its
+  background from the tokens, requiring 4.5:1 unless it's a documented exception.
+- `atoms_test.dart`: button, chip, search field, text field, radio, icon and
+  divider: taps, disabled state, sizes from Figma, large text, semantics.
+- `molecules/product_card_test.dart`: `ScalapayProductCard` content, money
+  formatting per locale, installments line, two-line ellipsis, one semantics node.
+- `organisms/*_test.dart`: sheet frame, sort sheet, filters sheet (numeric
+  fields, errors) and `show` (every way to dismiss, keyboard, insets, 200% text).
+- `goldens/*_golden_test.dart`: renders each component in Poppins and compares
+  it pixel by pixel with the reference PNGs in `goldens/images/`.
+- `widgetbook/test/`: opens every Widgetbook use case, checks each renders
+  without errors and passes the tap-target guidelines.
+
 ## Deliberate divergences from the mockup
 
 The screen reproduces Figma frame `0:3908`; the geometry was checked by
