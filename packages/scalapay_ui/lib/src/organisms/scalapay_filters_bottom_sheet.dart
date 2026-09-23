@@ -31,6 +31,7 @@ class ScalapayFiltersBottomSheet extends StatelessWidget {
     this.onClose,
     this.onClear,
     this.onApply,
+    this.closeLabel,
   });
 
   final String title;
@@ -50,6 +51,10 @@ class ScalapayFiltersBottomSheet extends StatelessWidget {
   final VoidCallback? onClose;
   final VoidCallback? onClear;
   final VoidCallback? onApply;
+
+  /// Label announced for the close button. Defaults to
+  /// `MaterialLocalizations.of(context).closeButtonTooltip`.
+  final String? closeLabel;
 
   // Measured on the Figma frame (no token): gap between the footer buttons
   // (was xs = 8).
@@ -75,6 +80,7 @@ class ScalapayFiltersBottomSheet extends StatelessWidget {
     VoidCallback? onClose,
     VoidCallback? onClear,
     VoidCallback? onApply,
+    String? closeLabel,
   }) async {
     var applied = false;
     await showScalapayModalSheet<void>(
@@ -98,6 +104,7 @@ class ScalapayFiltersBottomSheet extends StatelessWidget {
                 onApply();
                 Navigator.of(sheetContext).pop();
               },
+        closeLabel: closeLabel,
       ),
     );
     if (!applied) onClose?.call();
@@ -109,6 +116,7 @@ class ScalapayFiltersBottomSheet extends StatelessWidget {
     return BottomSheetFrame(
       title: title,
       onClose: onClose,
+      closeLabel: closeLabel,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -195,10 +203,13 @@ class _PriceCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              height: _titleBoxHeight,
+            ConstrainedBox(
+              // A minimum, not a fixed height: at a large text scale the
+              // title grows the row instead of clipping.
+              constraints: const BoxConstraints(minHeight: _titleBoxHeight),
               child: Align(
                 alignment: Alignment.centerLeft,
+                heightFactor: 1,
                 child: Text(
                   title,
                   style: t.typography.p3Medium.copyWith(
@@ -244,9 +255,12 @@ class _PriceCard extends StatelessWidget {
             ),
             if (error != null) ...[
               SizedBox(height: t.spacing.xs),
-              Text(
-                error!,
-                style: t.typography.p5.copyWith(color: t.colors.error),
+              Semantics(
+                liveRegion: true,
+                child: Text(
+                  error!,
+                  style: t.typography.p5.copyWith(color: t.colors.error),
+                ),
               ),
             ],
           ],

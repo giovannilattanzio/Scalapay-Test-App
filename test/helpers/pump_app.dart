@@ -39,13 +39,17 @@ class _FileAssetLoader extends AssetLoader {
 ///
 /// [surfaceSize] and [textScaleFactor] reproduce the widths (320/375/900) and
 /// the raised system font size the design spec is measured against, without
-/// each test repeating the `tester.view` boilerplate.
+/// each test repeating the `tester.view` boilerplate. [textScaler], when
+/// given, is used instead of `TextScaler.linear(textScaleFactor)` — for
+/// example [AndroidNonLinearTextScaler], which reproduces Android 14+'s
+/// non-linear font scale curve that `TextScaler.linear` cannot.
 Future<void> pumpApp(
   WidgetTester tester,
   Widget child, {
   CatalogCubit? cubit,
   Size surfaceSize = const Size(375, 812),
   double textScaleFactor = 1,
+  TextScaler? textScaler,
 }) async {
   TestWidgetsFlutterBinding.ensureInitialized();
   // easy_localization persists the chosen locale through shared_preferences;
@@ -83,8 +87,9 @@ Future<void> pumpApp(
           supportedLocales: context.supportedLocales,
           locale: context.locale,
           builder: (context, materialChild) => MediaQuery(
-            data: MediaQuery.of(context)
-                .copyWith(textScaler: TextScaler.linear(textScaleFactor)),
+            data: MediaQuery.of(context).copyWith(
+              textScaler: textScaler ?? TextScaler.linear(textScaleFactor),
+            ),
             child: materialChild!,
           ),
           home: Scaffold(body: content),

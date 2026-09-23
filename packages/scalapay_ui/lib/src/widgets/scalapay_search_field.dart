@@ -11,11 +11,16 @@ class ScalapaySearchField extends StatelessWidget {
     this.controller,
     this.hint,
     this.onSubmitted,
+    this.actionLabel,
   });
 
   final TextEditingController? controller;
   final String? hint;
   final ValueChanged<String>? onSubmitted;
+
+  /// Semantics label of the action button. Defaults to the current
+  /// [MaterialLocalizations.searchFieldLabel] (localized).
+  final String? actionLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +29,7 @@ class ScalapaySearchField extends StatelessWidget {
       controller: controller,
       hint: hint,
       onSubmitted: onSubmitted,
+      actionLabel: actionLabel,
       tokens: t,
     );
   }
@@ -34,12 +40,14 @@ class _SearchFieldBody extends StatefulWidget {
     required this.controller,
     required this.hint,
     required this.onSubmitted,
+    required this.actionLabel,
     required this.tokens,
   });
 
   final TextEditingController? controller;
   final String? hint;
   final ValueChanged<String>? onSubmitted;
+  final String? actionLabel;
   final ScalapayTokens tokens;
 
   @override
@@ -64,7 +72,9 @@ class _SearchFieldBodyState extends State<_SearchFieldBody> {
   Widget build(BuildContext context) {
     final t = widget.tokens;
     return Container(
-      height: 55,
+      // A fixed height would clip the text at large text scales; a minimum
+      // keeps the 55 look at scale 1 while letting the field grow with it.
+      constraints: const BoxConstraints(minHeight: 55),
       decoration: ShapeDecoration(
         color: t.colors.background,
         shape: StadiumBorder(side: BorderSide(color: t.colors.border)),
@@ -88,12 +98,26 @@ class _SearchFieldBodyState extends State<_SearchFieldBody> {
                 hintStyle: t.typography.p3Medium.copyWith(
                   color: t.colors.textSecondary,
                 ),
+                // isCollapsed sizes the decorator to the text alone (no
+                // padding, no InputDecorator minimum). At the P3 Medium text
+                // style that natural height is 20, so this symmetric padding
+                // (measured, no matching token) brings the field's own
+                // tappable/semantics box up to the 44 minimum (Apple HIG /
+                // WCAG 2.5.5) while keeping the text centered where it was;
+                // the extra space is absorbed inside the still-55-tall pill.
+                // An explicit contentPadding is honored even with
+                // isCollapsed, unlike a bare `constraints`, which only grows
+                // the box after layout and leaves the text off-center.
+                contentPadding: const EdgeInsets.symmetric(vertical: 12),
               ),
             ),
           ),
           Semantics(
             button: true,
-            label: 'Search',
+            label:
+                widget.actionLabel ??
+                MaterialLocalizations.of(context).searchFieldLabel,
+            onTap: _submit,
             excludeSemantics: true,
             child: Material(
               color: t.colors.primary,

@@ -24,6 +24,7 @@ class ScalapaySortBottomSheet<T> extends StatelessWidget {
     this.selected,
     this.onChanged,
     this.onClose,
+    this.closeLabel,
   });
 
   final String title;
@@ -32,8 +33,16 @@ class ScalapaySortBottomSheet<T> extends StatelessWidget {
   final ValueChanged<T>? onChanged;
   final VoidCallback? onClose;
 
-  // Measured on the Figma frame (no token): height of each option row.
+  /// Label announced for the close button. Defaults to
+  /// `MaterialLocalizations.of(context).closeButtonTooltip`.
+  final String? closeLabel;
+
+  // Measured on the Figma frame (no token): minimum height of each option
+  // row (radio area + divider), so a label that wraps at a large text scale
+  // grows the row instead of clipping it.
   static const _rowHeight = 64.0;
+  // ScalapayDivider is a fixed 1px line, not part of the growable radio area.
+  static const _dividerHeight = 1.0;
   // Measured on the Figma frame (no token): card horizontal padding (was s
   // = 16).
   static const _cardHorizontalPadding = 15.0;
@@ -50,11 +59,16 @@ class ScalapaySortBottomSheet<T> extends StatelessWidget {
     required Map<T, String> options,
     T? selected,
     VoidCallback? onClose,
+    String? closeLabel,
   }) async {
     final result = await showScalapayModalSheet<T>(
       context,
-      builder: (sheetContext) =>
-          _SortModal<T>(title: title, options: options, selected: selected),
+      builder: (sheetContext) => _SortModal<T>(
+        title: title,
+        options: options,
+        selected: selected,
+        closeLabel: closeLabel,
+      ),
     );
     if (result == null) onClose?.call();
     return result;
@@ -67,6 +81,7 @@ class ScalapaySortBottomSheet<T> extends StatelessWidget {
     return BottomSheetFrame(
       title: title,
       onClose: onClose,
+      closeLabel: closeLabel,
       child: Padding(
         padding: EdgeInsets.fromLTRB(t.spacing.s, 0, t.spacing.s, t.spacing.s),
         child: DecoratedBox(
@@ -83,24 +98,37 @@ class ScalapaySortBottomSheet<T> extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 for (var i = 0; i < entries.length; i++)
-                  SizedBox(
-                    height: _rowHeight,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Expanded(
-                          child: Center(
-                            child: ScalapayRadio<T>(
-                              value: entries[i].key,
-                              groupValue: selected,
-                              label: entries[i].value,
-                              onChanged: (value) => onChanged?.call(value),
-                            ),
+                  Column(
+                    // Keyed so tests can measure each row on its own; the
+                    // key is an implementation detail, not part of the
+                    // widget's content.
+                    key: ValueKey('sort-option-row-$i'),
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      ConstrainedBox(
+                        // A minimum, not a fixed height: a label that wraps
+                        // to two lines at a large text scale grows the row
+                        // instead of clipping it. Every row keeps the same
+                        // 64 minimum whether or not it has a divider, so the
+                        // last option is not 1px shorter than the others.
+                        constraints: BoxConstraints(
+                          minHeight:
+                              _rowHeight -
+                              (i < entries.length - 1 ? _dividerHeight : 0),
+                        ),
+                        child: Center(
+                          heightFactor: 1,
+                          child: ScalapayRadio<T>(
+                            value: entries[i].key,
+                            groupValue: selected,
+                            label: entries[i].value,
+                            onChanged: (value) => onChanged?.call(value),
                           ),
                         ),
-                        if (i < entries.length - 1) const ScalapayDivider(),
-                      ],
-                    ),
+                      ),
+                      if (i < entries.length - 1) const ScalapayDivider(),
+                    ],
                   ),
               ],
             ),
@@ -118,11 +146,13 @@ class _SortModal<T> extends StatefulWidget {
     required this.title,
     required this.options,
     required this.selected,
+    this.closeLabel,
   });
 
   final String title;
   final Map<T, String> options;
   final T? selected;
+  final String? closeLabel;
 
   @override
   State<_SortModal<T>> createState() => _SortModalState<T>();
@@ -155,5 +185,6 @@ class _SortModalState<T> extends State<_SortModal<T>> {
     selected: _selected,
     onChanged: _choose,
     onClose: () => Navigator.of(context).pop(),
+    closeLabel: widget.closeLabel,
   );
 }

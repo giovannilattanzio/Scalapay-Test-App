@@ -23,7 +23,10 @@ class CatalogGridFooter extends StatelessWidget {
       LoadMoreStatus.loading => Padding(
         padding: EdgeInsets.all(t.spacing.s),
         child: Center(
-          child: CircularProgressIndicator(color: t.colors.primary),
+          child: CircularProgressIndicator(
+            color: t.colors.primary,
+            semanticsLabel: 'catalog.loading'.tr(),
+          ),
         ),
       ),
       LoadMoreStatus.failure => Padding(
@@ -31,10 +34,13 @@ class CatalogGridFooter extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'catalog.load_more_error'.tr(),
-              textAlign: TextAlign.center,
-              style: t.typography.p4.copyWith(color: t.colors.textSecondary),
+            Semantics(
+              liveRegion: true,
+              child: Text(
+                'catalog.load_more_error'.tr(),
+                textAlign: TextAlign.center,
+                style: t.typography.p4.copyWith(color: t.colors.textSecondary),
+              ),
             ),
             SizedBox(height: t.spacing.xs),
             ScalapayButton(label: 'catalog.retry'.tr(), onPressed: onRetry),

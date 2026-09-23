@@ -11,17 +11,26 @@ import '../../widgets/scalapay_icon.dart';
 /// takes the width its parent offers and the height of its content, plus the
 /// bottom system inset (for example the home indicator) added below [child]
 /// so its last row never sits under it.
+///
+/// The close button is announced as a button labeled [closeLabel]; without
+/// one it falls back to `MaterialLocalizations.of(context).closeButtonTooltip`
+/// (the platform's localized word for "close" in the app's locale).
 class BottomSheetFrame extends StatelessWidget {
   const BottomSheetFrame({
     super.key,
     required this.title,
     required this.child,
     this.onClose,
+    this.closeLabel,
   });
 
   final String title;
   final Widget child;
   final VoidCallback? onClose;
+
+  /// Label announced for the close button. Defaults to
+  /// `MaterialLocalizations.of(context).closeButtonTooltip`.
+  final String? closeLabel;
 
   // Measured on the Figma frame (no token for these).
   static const _headerHeight = 91.0;
@@ -103,6 +112,11 @@ class BottomSheetFrame extends StatelessWidget {
                   height: _closeHeight,
                   child: Semantics(
                     button: true,
+                    label:
+                        closeLabel ??
+                        MaterialLocalizations.of(context).closeButtonTooltip,
+                    onTap: onClose,
+                    excludeSemantics: true,
                     child: InkResponse(
                       onTap: onClose,
                       child: Center(

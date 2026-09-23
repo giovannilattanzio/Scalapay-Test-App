@@ -185,6 +185,23 @@ void main() {
     expect(style.color, colors.error);
   });
 
+  testWidgets('a price error is announced as a live region', (tester) async {
+    final handle = tester.ensureSemantics();
+    await tester.pumpWidget(_host(_sheet()));
+    await tester.pumpWidget(
+      _host(_sheet(priceError: 'Il minimo supera il massimo')),
+    );
+
+    expect(
+      tester.getSemantics(find.text('Il minimo supera il massimo')),
+      matchesSemantics(
+        label: 'Il minimo supera il massimo',
+        isLiveRegion: true,
+      ),
+    );
+    handle.dispose();
+  });
+
   testWidgets('no error message means no message and no reserved space', (
     tester,
   ) async {
@@ -302,5 +319,74 @@ void main() {
         .height;
     expect(height, lessThan(400));
     expect(height, greaterThan(250));
+  });
+
+  group('large text', () {
+    testWidgets(
+      'standalone: no overflow and both footer buttons are visible at '
+      '200% text scale',
+      (tester) async {
+        tester.view.physicalSize = const Size(375, 812);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ScalapayTheme.light(),
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(context)
+                  .copyWith(textScaler: const TextScaler.linear(2)),
+              child: child!,
+            ),
+            home: Scaffold(
+              body: SingleChildScrollView(
+                child: ScalapayFiltersBottomSheet(
+                  title: 'Filtri',
+                  priceTitle: 'Fascia di prezzo molto lunga da visualizzare',
+                  minLabel: 'Minimo',
+                  maxLabel: 'Massimo',
+                  clearLabel: 'Cancella tutto',
+                  applyLabel: 'Mostra risultati',
+                  priceError: 'Il minimo supera il massimo, correggi i valori',
+                  onClear: () {},
+                  onApply: () {},
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+        // The two price fields' EditableText each own a Scrollable too, so
+        // the outer one (the one scrolling the whole sheet) is picked out by
+        // its ancestry, not by type alone.
+        final outerScrollable = find
+            .ancestor(
+              of: find.byType(ScalapayFiltersBottomSheet),
+              matching: find.byType(Scrollable),
+            )
+            .first;
+        for (final label in ['Cancella tutto', 'Mostra risultati']) {
+          await tester.scrollUntilVisible(
+            find.text(label),
+            200,
+            scrollable: outerScrollable,
+          );
+          expect(find.text(label), findsOneWidget);
+        }
+      },
+    );
+  });
+
+  group('accessibility - tap target guidelines', () {
+    testWidgets('standalone sheet meets tap target guidelines', (tester) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        _host(_sheet(onClose: () {}, onClear: () {}, onApply: () {})),
+      );
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      handle.dispose();
+    });
   });
 }

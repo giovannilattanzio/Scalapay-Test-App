@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:scalapay_ui/scalapay_ui.dart';
@@ -186,7 +187,10 @@ void main() {
       final labelWidth = tester.getSize(find.text(label)).width;
       expect(chipWidth, closeTo(labelWidth + 40, 0.5));
       expect(tester.getSize(find.byType(ScalapayIcon)).width, 20);
-      expect(tester.getSize(find.byType(ScalapayFilterChip)).height, 32);
+      // The tap target is 44 tall (WCAG 2.5.5 / Apple HIG); the visible pill
+      // inside it stays 32 tall (see the "ScalapayFilterChip tap target"
+      // group).
+      expect(tester.getSize(find.byType(ScalapayFilterChip)).height, 44);
     });
 
     testWidgets('order icon is 24, chip width is label width + 36', (
@@ -202,7 +206,7 @@ void main() {
       final labelWidth = tester.getSize(find.text(label)).width;
       expect(chipWidth, closeTo(labelWidth + 36, 0.5));
       expect(tester.getSize(find.byType(ScalapayIcon)).width, 24);
-      expect(tester.getSize(find.byType(ScalapayFilterChip)).height, 32);
+      expect(tester.getSize(find.byType(ScalapayFilterChip)).height, 44);
     });
   });
 
@@ -235,6 +239,37 @@ void main() {
       await tester.enterText(find.byType(TextField), 'Adidas');
       await tester.testTextInput.receiveAction(TextInputAction.search);
       expect(submitted, 'Adidas');
+    });
+
+    testWidgets('at a large text scale it grows instead of overflowing', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ScalapayTheme.light(),
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: const TextScaler.linear(2)),
+            child: child!,
+          ),
+          home: Scaffold(
+            body: Align(
+              alignment: Alignment.topLeft,
+              child: SizedBox(
+                width: 343,
+                child: ScalapaySearchField(
+                  controller: TextEditingController(text: 'Nike'),
+                  onSubmitted: (_) {},
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('Nike'), findsOneWidget);
     });
   });
 
@@ -482,6 +517,490 @@ void main() {
         tester.widget<Divider>(find.byType(Divider)).color,
         const ScalapayColors().border,
       );
+    });
+  });
+
+  group('accessibility - semantics tap actions', () {
+    testWidgets('enabled ScalapayButton primary exposes a tap action', (
+      tester,
+    ) async {
+      // Disposed explicitly (not via addTearDown): addTearDown callbacks run
+      // after WidgetTester's end-of-test invariant checks, which would flag
+      // the handle as still active.
+      final handle = tester.ensureSemantics();
+      var taps = 0;
+      await tester.pumpWidget(
+        _host(ScalapayButton(label: 'Riprova', onPressed: () => taps++)),
+      );
+
+      expect(
+        tester.getSemantics(find.byType(ScalapayButton)),
+        matchesSemantics(
+          label: 'Riprova',
+          isButton: true,
+          hasEnabledState: true,
+          isEnabled: true,
+          hasTapAction: true,
+        ),
+      );
+
+      tester.semantics.tap(find.semantics.byLabel('Riprova'));
+      expect(taps, 1);
+      handle.dispose();
+    });
+
+    testWidgets('enabled ScalapayButton tertiary exposes a tap action', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      var taps = 0;
+      await tester.pumpWidget(
+        _host(
+          ScalapayButton(
+            variant: ScalapayButtonVariant.tertiary,
+            label: 'Riprova',
+            onPressed: () => taps++,
+          ),
+        ),
+      );
+
+      expect(
+        tester.getSemantics(find.byType(ScalapayButton)),
+        matchesSemantics(
+          label: 'Riprova',
+          isButton: true,
+          hasEnabledState: true,
+          isEnabled: true,
+          hasTapAction: true,
+        ),
+      );
+
+      tester.semantics.tap(find.semantics.byLabel('Riprova'));
+      expect(taps, 1);
+      handle.dispose();
+    });
+
+    testWidgets('disabled ScalapayButton has no tap action', (tester) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(_host(const ScalapayButton(label: 'Riprova')));
+
+      expect(
+        tester.getSemantics(find.byType(ScalapayButton)),
+        matchesSemantics(
+          label: 'Riprova',
+          isButton: true,
+          hasEnabledState: true,
+          isEnabled: false,
+          hasTapAction: false,
+        ),
+      );
+      handle.dispose();
+    });
+
+    testWidgets('enabled ScalapayFilterChip exposes a tap action', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      var taps = 0;
+      await tester.pumpWidget(
+        _host(
+          ScalapayFilterChip(
+            label: 'Filtri',
+            icon: ScalapayIconData.filter,
+            onPressed: () => taps++,
+          ),
+        ),
+      );
+
+      expect(
+        tester.getSemantics(find.byType(ScalapayFilterChip)),
+        matchesSemantics(
+          label: 'Filtri',
+          isButton: true,
+          hasEnabledState: true,
+          isEnabled: true,
+          hasTapAction: true,
+        ),
+      );
+
+      tester.semantics.tap(find.semantics.byLabel('Filtri'));
+      expect(taps, 1);
+      handle.dispose();
+    });
+
+    testWidgets(
+      'unselected ScalapayRadio exposes a tap action and reports its value',
+      (tester) async {
+        final handle = tester.ensureSemantics();
+        String? picked;
+        await tester.pumpWidget(
+          _host(
+            ScalapayRadio<String>(
+              value: 'asc',
+              groupValue: 'desc',
+              label: 'Prezzo crescente',
+              onChanged: (v) => picked = v,
+            ),
+          ),
+        );
+
+        expect(
+          tester.getSemantics(find.byType(ScalapayRadio<String>)),
+          matchesSemantics(
+            label: 'Prezzo crescente',
+            isInMutuallyExclusiveGroup: true,
+            hasCheckedState: true,
+            isChecked: false,
+            hasTapAction: true,
+          ),
+        );
+
+        tester.semantics.tap(find.semantics.byLabel('Prezzo crescente'));
+        expect(picked, 'asc');
+        handle.dispose();
+      },
+    );
+
+    testWidgets('selected ScalapayRadio has no tap action', (tester) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        _host(
+          ScalapayRadio<String>(
+            value: 'asc',
+            groupValue: 'asc',
+            label: 'Prezzo crescente',
+            onChanged: (_) {},
+          ),
+        ),
+      );
+
+      expect(
+        tester.getSemantics(find.byType(ScalapayRadio<String>)),
+        matchesSemantics(
+          label: 'Prezzo crescente',
+          isInMutuallyExclusiveGroup: true,
+          hasCheckedState: true,
+          isChecked: true,
+          hasTapAction: false,
+        ),
+      );
+      handle.dispose();
+    });
+
+    testWidgets('ScalapaySearchField action button exposes a tap action', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      String? submitted;
+      await tester.pumpWidget(
+        _host(
+          SizedBox(
+            width: 343,
+            child: ScalapaySearchField(onSubmitted: (v) => submitted = v),
+          ),
+        ),
+      );
+      final buttonFinder = find.descendant(
+        of: find.byType(ScalapaySearchField),
+        matching: find.bySemanticsLabel('Search'),
+      );
+
+      expect(
+        tester.getSemantics(buttonFinder),
+        matchesSemantics(label: 'Search', isButton: true, hasTapAction: true),
+      );
+
+      tester.semantics.tap(find.semantics.byLabel('Search'));
+      expect(submitted, '');
+      handle.dispose();
+    });
+  });
+
+  group('ScalapaySearchField actionLabel', () {
+    testWidgets('caller-supplied label is used for the action button', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _host(
+          SizedBox(
+            width: 343,
+            child: ScalapaySearchField(actionLabel: 'Avvia ricerca'),
+          ),
+        ),
+      );
+      expect(
+        tester.getSemantics(
+          find.descendant(
+            of: find.byType(ScalapaySearchField),
+            matching: find.bySemanticsLabel('Avvia ricerca'),
+          ),
+        ),
+        matchesSemantics(
+          label: 'Avvia ricerca',
+          isButton: true,
+          hasTapAction: true,
+        ),
+      );
+    });
+
+    testWidgets('without a label it falls back to the localized default', (
+      tester,
+    ) async {
+      late BuildContext capturedContext;
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ScalapayTheme.light(),
+          locale: const Locale('it'),
+          supportedLocales: const [Locale('it'), Locale('en')],
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          home: Scaffold(
+            body: Builder(
+              builder: (context) {
+                capturedContext = context;
+                return const SizedBox(width: 343, child: ScalapaySearchField());
+              },
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final expectedLabel = MaterialLocalizations.of(capturedContext)
+          .searchFieldLabel;
+      expect(expectedLabel, isNot('Search'));
+      expect(
+        tester.getSemantics(
+          find.descendant(
+            of: find.byType(ScalapaySearchField),
+            matching: find.bySemanticsLabel(expectedLabel),
+          ),
+        ),
+        matchesSemantics(
+          label: expectedLabel,
+          isButton: true,
+          hasTapAction: true,
+        ),
+      );
+    });
+  });
+
+  group('ScalapayFilterChip tap target', () {
+    testWidgets('tapping the pill invokes the callback exactly once', (
+      tester,
+    ) async {
+      var taps = 0;
+      await tester.pumpWidget(
+        _host(
+          ScalapayFilterChip(
+            label: 'Filtri',
+            icon: ScalapayIconData.filter,
+            onPressed: () => taps++,
+          ),
+        ),
+      );
+      await tester.tap(find.text('Filtri'));
+      expect(taps, 1);
+    });
+
+    testWidgets(
+      'tapping 5px above the visible pill invokes the callback exactly once',
+      (tester) async {
+        var taps = 0;
+        await tester.pumpWidget(
+          _host(
+            ScalapayFilterChip(
+              label: 'Filtri',
+              icon: ScalapayIconData.filter,
+              onPressed: () => taps++,
+            ),
+          ),
+        );
+        final chipTop = tester.getTopLeft(find.byType(ScalapayFilterChip)).dy;
+        final chipCenterX = tester
+            .getCenter(find.byType(ScalapayFilterChip))
+            .dx;
+        await tester.tapAt(Offset(chipCenterX, chipTop + 5));
+        expect(taps, 1);
+      },
+    );
+
+    testWidgets('the visible pill stays 32 tall', (tester) async {
+      await tester.pumpWidget(
+        _host(
+          ScalapayFilterChip(
+            label: 'Filtri',
+            icon: ScalapayIconData.filter,
+            onPressed: () {},
+          ),
+        ),
+      );
+      final pillFinder = find.descendant(
+        of: find.byType(ScalapayFilterChip),
+        matching: find.byWidgetPredicate(
+          (w) => w is Material && w.shape is StadiumBorder,
+        ),
+      );
+      expect(tester.getSize(pillFinder).height, 32);
+    });
+
+    testWidgets('the whole chip is at least 44 tall', (tester) async {
+      await tester.pumpWidget(
+        _host(
+          ScalapayFilterChip(
+            label: 'Filtri',
+            icon: ScalapayIconData.filter,
+            onPressed: () {},
+          ),
+        ),
+      );
+      expect(
+        tester.getSize(find.byType(ScalapayFilterChip)).height,
+        greaterThanOrEqualTo(44),
+      );
+    });
+
+    testWidgets(
+      'the ink (press highlight) is clipped to the pill, not the 44 box',
+      (tester) async {
+        await tester.pumpWidget(
+          _host(
+            ScalapayFilterChip(
+              label: 'Filtri',
+              icon: ScalapayIconData.filter,
+              onPressed: () {},
+            ),
+          ),
+        );
+        final inkWellFinder = find.descendant(
+          of: find.byType(ScalapayFilterChip),
+          matching: find.byType(InkWell),
+        );
+        expect(inkWellFinder, findsOneWidget);
+        final pillFinder = find.ancestor(
+          of: inkWellFinder,
+          matching: find.byWidgetPredicate(
+            (w) => w is Material && w.shape is StadiumBorder,
+          ),
+        );
+        expect(pillFinder, findsOneWidget);
+      },
+    );
+  });
+
+  group('accessibility - tap target guidelines', () {
+    Widget padded(Widget child) =>
+        Padding(padding: const EdgeInsets.all(24), child: child);
+
+    testWidgets('ScalapayButton primary meets tap target guidelines', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        _host(padded(ScalapayButton(label: 'Riprova', onPressed: () {}))),
+      );
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      handle.dispose();
+    });
+
+    testWidgets('ScalapayButton tertiary meets tap target guidelines', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        _host(
+          padded(
+            ScalapayButton(
+              variant: ScalapayButtonVariant.tertiary,
+              label: 'Riprova',
+              onPressed: () {},
+            ),
+          ),
+        ),
+      );
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      handle.dispose();
+    });
+
+    testWidgets('ScalapayFilterChip filter icon meets tap target guidelines', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        _host(
+          padded(
+            ScalapayFilterChip(
+              label: 'Filtri',
+              icon: ScalapayIconData.filter,
+              onPressed: () {},
+            ),
+          ),
+        ),
+      );
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      handle.dispose();
+    });
+
+    testWidgets('ScalapayFilterChip order icon meets tap target guidelines', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        _host(
+          padded(
+            ScalapayFilterChip(
+              label: 'Ordina',
+              icon: ScalapayIconData.order,
+              onPressed: () {},
+            ),
+          ),
+        ),
+      );
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      handle.dispose();
+    });
+
+    testWidgets('unselected ScalapayRadio meets tap target guidelines', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        _host(
+          padded(
+            SizedBox(
+              width: 300,
+              child: ScalapayRadio<String>(
+                value: 'asc',
+                groupValue: 'desc',
+                label: 'Prezzo crescente',
+                onChanged: (_) {},
+              ),
+            ),
+          ),
+        ),
+      );
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      handle.dispose();
+    });
+
+    testWidgets('ScalapaySearchField meets tap target guidelines', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        _host(padded(const SizedBox(width: 343, child: ScalapaySearchField()))),
+      );
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      handle.dispose();
     });
   });
 

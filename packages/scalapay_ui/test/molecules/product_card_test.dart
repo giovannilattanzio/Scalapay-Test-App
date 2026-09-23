@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/intl.dart';
 import 'package:scalapay_ui/scalapay_ui.dart';
 
 const _imageKey = ValueKey('product-image');
@@ -283,6 +285,95 @@ void main() {
           .toList();
       expect(sizes[0], sizes[1]);
       expect(sizes[0], greaterThan(300));
+    });
+  });
+
+  group('accessibility', () {
+    testWidgets(
+      'the card is one semantics node with the rendered lines in order, '
+      'and the image is not announced',
+      (tester) async {
+        final handle = tester.ensureSemantics();
+        final money = NumberFormat.currency(
+          locale: 'it',
+          symbol: '€',
+          decimalDigits: 2,
+        );
+        final priceLine = money.format(85);
+        final installmentsLine = '3 rate da ${money.format(28.33)}';
+        final expectedLabel = [
+          'Sneaker',
+          'Nike',
+          priceLine,
+          installmentsLine,
+        ].join('\n');
+
+        await tester.pumpWidget(
+          _host(
+            () => ScalapayProductCard(
+              image: const Semantics.fromProperties(
+                properties: SemanticsProperties(label: 'foto', image: true),
+                child: SizedBox(width: 40, height: 40),
+              ),
+              name: 'Sneaker',
+              store: 'Nike',
+              price: 85,
+              currency: '€',
+              installmentCount: 3,
+              installmentAmount: 28.33,
+              installmentLabel: 'rate da',
+            ),
+            locale: const Locale('it'),
+          ),
+        );
+
+        final semantics = tester.getSemantics(find.byType(ScalapayProductCard));
+        expect(semantics.label, expectedLabel);
+        expect(semantics.label, contains('Sneaker'));
+        expect(semantics.label, contains('Nike'));
+        expect(semantics.label, contains(priceLine));
+        expect(semantics.label, contains(installmentsLine));
+        // The image (and anything else inside) adds no node of its own.
+        expect(semantics.childrenCount, 0);
+        expect(find.bySemanticsLabel('foto'), findsNothing);
+
+        handle.dispose();
+      },
+    );
+
+    testWidgets('at a large text scale it grows without throwing', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ScalapayTheme.light(),
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: const TextScaler.linear(2)),
+            child: child!,
+          ),
+          home: Scaffold(
+            body: Align(
+              alignment: Alignment.topLeft,
+              child: SizedBox(width: 164, child: _card()),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('meets tap target guidelines (no interactive element inside)', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        _host(() => Padding(padding: const EdgeInsets.all(24), child: _card())),
+      );
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      handle.dispose();
     });
   });
 }

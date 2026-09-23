@@ -46,12 +46,23 @@ packages/scalapay_ui/
 - Use `@widgetbook.UseCase(name:, type:)` with `context.knobs` for text and simple options.
 - The theme of previewed widgets is set with `MaterialThemeAddon` in `widgetbook/lib/main.dart`. `lightTheme`/`darkTheme` on `Widgetbook.material` only style Widgetbook's own UI, so using them makes every atom fail with "ScalapayTokens not found in the current Theme". `widgetbook/test/widgetbook_smoke_test.dart` opens every use case inside the real Widgetbook and must stay green. It builds each route as `folder/component/use-case` (lowercase, spaces to dashes, query-encoded): `WidgetbookNode.path` is NOT a valid route, and a wrong route renders nothing while the test still passes, so the test asserts that Widgetbook selected the use case.
 
+## Accessibility
+
+- Every interactive element is one `Semantics` node with its label, role (`button: true`, or `inMutuallyExclusiveGroup` + `checked` for radios), state (`enabled`, `checked`) and `onTap`. With `excludeSemantics: true` the inner `InkWell` action is dropped, so `onTap` on the `Semantics` node is mandatory; pass `null` when the element is disabled or would not react (a selected radio).
+- Tap area of at least 44x44 logical pixels. When Figma draws something smaller (the 32px filter chip), keep the visible box at the Figma size and grow the tappable box around it, centered; never shrink the tappable box to the visual one.
+- Text never sits in a fixed height: use `ConstrainedBox(minHeight: ...)` with the Figma value as the minimum, so the component grows at large text scales instead of clipping or overflowing.
+- No hardcoded text in any language, including semantics labels. An announced label comes from the caller (an optional parameter) and otherwise from `MaterialLocalizations.of(context)` (`searchFieldLabel`, `closeButtonTooltip`, ...), which the app already localizes.
+- Messages that appear as a reaction (field errors, status texts) are wrapped in `Semantics(liveRegion: true)`; sheet and section titles are `Semantics(header: true)`. Decorative content (images in a card, handles, dividers) adds no node of its own; a non-interactive composite that reads as one thing (a product card) is one `Semantics(container: true, label: ..., excludeSemantics: true)` whose label is built from the same strings it renders.
+- Every new or changed component gets: a semantics test (`matchesSemantics` with label, role, state and `hasTapAction`, plus performing the tap action from semantics when interactive), `meetsGuideline(labeledTapTargetGuideline)` and `meetsGuideline(iOSTapTargetGuideline)`, and a test at `TextScaler.linear(2)` asserting `tester.takeException()` is null, repeated with a non-linear scaler reproducing Android 14+ (small font sizes about 2x, large ones much less). `textScaler.scale(x)` takes a font size: never pass it a layout length; derive a factor from the rendered font sizes instead. Tests that check a localized default set `Locale('it')` with the `Global*Localizations` delegates.
+- `widgetbook/test/widgetbook_a11y_test.dart` opens every use case in preview mode and runs both guidelines, so a new use case is checked automatically: it must stay green, and use case knob defaults must never produce an empty label.
+- Color tokens: `test/contrast_test.dart` checks every text color against its backgrounds. A new or changed text color below 4.5:1 is not silently added to the known exceptions: report it, with its ratio, to the caller.
+
 ## Steps
 
 1. Read the existing tokens and the atoms or molecules that could already cover the request before adding anything. Check whether the requested component is a variant of an existing atom (same widget with a different look or emphasis, or a Figma component set with variant properties): if so, follow "Variants of existing components" instead of creating a component.
 2. Implement the atom in `lib/src/widgets/`, the molecule in `lib/src/molecules/`, the organism in `lib/src/organisms/`, or the token change in `lib/src/foundations/`.
 3. Export it from the barrel.
-4. Add behavior tests under `packages/scalapay_ui/test/`.
+4. Add behavior tests under `packages/scalapay_ui/test/`, including the accessibility tests listed in "Accessibility" (semantics, both guidelines, text scale 2.0).
 5. Add a golden test for every UI component you created (see "Golden tests" below).
 6. Add Widgetbook use cases, then in `packages/scalapay_ui/widgetbook` run `dart run build_runner build --delete-conflicting-outputs`.
 7. Run `dart format`, then `flutter analyze` and `flutter test` in both `packages/scalapay_ui` and `packages/scalapay_ui/widgetbook`.

@@ -31,6 +31,7 @@ class ScalapayRadio<T> extends StatelessWidget {
       inMutuallyExclusiveGroup: true,
       checked: _selected,
       label: label,
+      onTap: _selected ? null : () => onChanged(value),
       excludeSemantics: true,
       child: InkWell(
         onTap: _selected ? null : () => onChanged(value),

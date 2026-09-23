@@ -59,13 +59,17 @@ void main() {
     final radios = find.byType(ScalapayRadio<_Sort>);
     expect(radios, findsNWidgets(4));
     for (var i = 0; i < 4; i++) {
+      final isChecked = _options.keys.elementAt(i) == _Sort.nameAsc;
       expect(
         tester.getSemantics(radios.at(i)),
         matchesSemantics(
           label: _options.values.elementAt(i),
           isInMutuallyExclusiveGroup: true,
           hasCheckedState: true,
-          isChecked: _options.keys.elementAt(i) == _Sort.nameAsc,
+          isChecked: isChecked,
+          // A selected radio has no tap action (tapping it would re-report
+          // the same value); an unselected one does.
+          hasTapAction: !isChecked,
         ),
         reason: _options.values.elementAt(i),
       );
@@ -83,6 +87,7 @@ void main() {
           isInMutuallyExclusiveGroup: true,
           hasCheckedState: true,
           isChecked: false,
+          hasTapAction: true,
         ),
       );
     }
@@ -111,8 +116,12 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(_host(_sheet()));
-    final rows = find.byWidgetPredicate((w) => w is SizedBox && w.height == 64);
-    expect(rows, findsNWidgets(4));
+    for (var i = 0; i < 4; i++) {
+      expect(
+        tester.getSize(find.byKey(ValueKey('sort-option-row-$i'))).height,
+        64,
+      );
+    }
 
     final radios = find.byType(ScalapayRadio<_Sort>);
     final card = find
@@ -182,5 +191,60 @@ void main() {
         .height;
     expect(height, lessThan(400));
     expect(height, greaterThan(300));
+  });
+
+  group('large text', () {
+    const longOptions = <_Sort, String>{
+      _Sort.priceAsc: 'Prezzo crescente dal più basso al più alto',
+      _Sort.priceDesc: 'Prezzo decrescente dal più alto al più basso',
+      _Sort.nameAsc: 'Nome in ordine alfabetico crescente da A a Z',
+      _Sort.nameDesc: 'Nome in ordine alfabetico decrescente da Z a A',
+    };
+
+    testWidgets(
+      'standalone: no overflow and every long option is visible at 200% '
+      'text scale',
+      (tester) async {
+        tester.view.physicalSize = const Size(375, 812);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ScalapayTheme.light(),
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(context)
+                  .copyWith(textScaler: const TextScaler.linear(2)),
+              child: child!,
+            ),
+            home: Scaffold(
+              body: SingleChildScrollView(
+                child: ScalapaySortBottomSheet<_Sort>(
+                  title: 'Ordina',
+                  options: longOptions,
+                  selected: _Sort.priceAsc,
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+        for (final label in longOptions.values) {
+          await tester.scrollUntilVisible(find.text(label), 200);
+          expect(find.text(label), findsOneWidget);
+        }
+      },
+    );
+  });
+
+  group('accessibility - tap target guidelines', () {
+    testWidgets('standalone sheet meets tap target guidelines', (tester) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(_host(_sheet(onClose: () {})));
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      handle.dispose();
+    });
   });
 }

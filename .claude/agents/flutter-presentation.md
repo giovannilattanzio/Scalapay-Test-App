@@ -116,6 +116,18 @@ Build screens from the design system package `scalapay_ui` (`import 'package:sca
 
 If the screen needs a widget the package does not have, do not build it in the feature: stop and report the missing atom so the orchestrator can delegate it to `flutter-design-system`. A Figma URL or design spec in the delegation prompt, when present, defines layout and content; tokens still come from the package.
 
+## Accessibility
+
+The design system components already carry their own semantics: build with them and add only what is screen-specific.
+
+- The screen title is `Semantics(header: true)`.
+- Every progress indicator has a translated `semanticsLabel` (for example `CircularProgressIndicator(semanticsLabel: 'catalog.loading'.tr())`).
+- Messages that replace content as the state changes (initial prompt, empty results, errors, "load more" errors) are wrapped in `Semantics(liveRegion: true)` so a screen reader announces them without the user moving focus.
+- Every announced text, semantics labels included, comes from `assets/translations/{it,en}.json` through `easy_localization`; add the key to both files. Do not pass labels to design system components that already default to a localized one (`ScalapaySearchField.actionLabel`, `closeLabel` of the bottom sheets) unless the screen needs different wording.
+- Never put text inside a fixed height; use minimum constraints, or derive sizes that hold text from `MediaQuery.textScalerOf(context)` as `CatalogProductGrid` does. `textScaler.scale(x)` takes a **font size**: pass it the font sizes actually rendered and turn the result into a factor (`textScaler.scale(fontSize) / fontSize`), never a layout length such as a height or a cell width. On Android 14+ the system scaler is non-linear (small fonts about 2x, large values barely scaled), so scaling a 170px height as if it were a font leaves it almost unchanged while the text doubles.
+- Every new page gets a widget test (through `pumpApp`) per visible state with `meetsGuideline(labeledTapTargetGuideline)` and `meetsGuideline(iOSTapTargetGuideline)`, and a test with `textScaleFactor: 2.0` at 375 and 320 wide asserting `tester.takeException()` is null, repeated with a non-linear text scaler reproducing Android 14+: `TextScaler.linear` alone hides the non-linear bugs above.
+- If an accessibility need cannot be met with the existing components (a tap target below 44x44, an unlabeled control inside an atom), do not patch it in the feature: report it so the orchestrator delegates the fix to `flutter-design-system`.
+
 ## Constraints
 
 - NEVER hardcode `Color(...)`, `Colors.*` or `TextStyle(...)` in feature widgets: use `context.tokens`

@@ -25,11 +25,14 @@ class CatalogMessage extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: t.typography.p3Medium.copyWith(
-                color: t.colors.textSecondary,
+            Semantics(
+              liveRegion: true,
+              child: Text(
+                message,
+                textAlign: TextAlign.center,
+                style: t.typography.p3Medium.copyWith(
+                  color: t.colors.textSecondary,
+                ),
               ),
             ),
             if (label != null) ...[

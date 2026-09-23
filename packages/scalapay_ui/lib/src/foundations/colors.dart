@@ -5,6 +5,21 @@ import 'package:flutter/painting.dart';
 /// Figma names in comments. `error` and `textDisabled` are placeholders: the
 /// error color is not in the design yet and the disabled role of Grayscale/600
 /// is assumed.
+///
+/// A few text-on-background pairs fall below the WCAG AA 4.5:1 contrast
+/// minimum. They are kept at their Figma values on purpose (a user decision
+/// to raise with design, not a silent gap) and documented here:
+/// - `textSecondary` on `background`: 3.44:1 (UI/Grayscale/700, used for
+///   secondary texts, hint and field labels).
+/// - `textSecondary` on `surface`: 3.22:1 (same token, light background).
+/// - `error` on `background`: 4.38:1 (placeholder value, not in Figma).
+/// - `textDisabled` on `background`: ~2.68:1 and `textDisabled` on `border`:
+///   ~2.37:1 (WCAG 1.4.3 exempts text of inactive controls).
+///
+/// `test/contrast_test.dart` computes these ratios and enforces this exact
+/// list: a pair dropping below 4.5:1 without being documented here fails
+/// the test, and a documented exception reaching 4.5:1 or drifting from its
+/// recorded ratio fails it too.
 class ScalapayColors {
   const ScalapayColors({
     this.primary = const Color(0xFF5666F0), // Brand/Colors/Core/Lilac/900

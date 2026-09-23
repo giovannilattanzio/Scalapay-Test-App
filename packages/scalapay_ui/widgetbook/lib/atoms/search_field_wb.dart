@@ -12,6 +12,7 @@ Widget searchFieldEmpty(BuildContext context) => Padding(
       label: 'Hint',
       initialValue: 'Cerca brand o negozi',
     ),
+    actionLabel: context.knobs.stringOrNull(label: 'Action label'),
     onSubmitted: (_) {},
   ),
 );
@@ -21,6 +22,7 @@ Widget searchFieldFilled(BuildContext context) => Padding(
   padding: EdgeInsets.all(context.tokens.spacing.s),
   child: ScalapaySearchField(
     controller: TextEditingController(text: 'Nike'),
+    actionLabel: context.knobs.stringOrNull(label: 'Action label'),
     onSubmitted: (_) {},
   ),
 );

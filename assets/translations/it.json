@@ -11,7 +11,8 @@
     "error_parsing": "Non siamo riusciti a leggere i risultati. Riprova più tardi.",
     "error_generic": "Qualcosa è andato storto. Riprova.",
     "retry": "Riprova",
-    "load_more_error": "Caricamento non riuscito. Riprova."
+    "load_more_error": "Caricamento non riuscito. Riprova.",
+    "loading": "Caricamento prodotti"
   },
   "product": {
     "installment_connector": "rate da",

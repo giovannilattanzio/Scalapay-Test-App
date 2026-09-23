@@ -354,4 +354,196 @@ void main() {
       },
     );
   });
+
+  group('closeLabel passthrough', () {
+    testWidgets('ScalapaySortBottomSheet.show passes closeLabel through', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        _app((context) async {
+          await ScalapaySortBottomSheet.show<_Sort>(
+            context,
+            title: 'Ordina',
+            options: _options,
+            selected: _Sort.priceAsc,
+            closeLabel: 'Chiudi ordinamento',
+          );
+        }),
+      );
+      await _open(tester);
+
+      expect(find.bySemanticsLabel('Chiudi ordinamento'), findsOneWidget);
+      handle.dispose();
+    });
+
+    testWidgets('ScalapayFiltersBottomSheet.show passes closeLabel through', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        _app((context) async {
+          await ScalapayFiltersBottomSheet.show(
+            context,
+            title: 'Filtri',
+            priceTitle: 'Fascia di prezzo',
+            minLabel: 'Minimo',
+            maxLabel: 'Massimo',
+            clearLabel: 'Cancella tutto',
+            applyLabel: 'Mostra risultati',
+            closeLabel: 'Chiudi filtri',
+          );
+        }),
+      );
+      await _open(tester);
+
+      expect(find.bySemanticsLabel('Chiudi filtri'), findsOneWidget);
+      handle.dispose();
+    });
+  });
+
+  group('large text (200%)', () {
+    Widget appAtScale(Future<void> Function(BuildContext) onOpen) =>
+        MaterialApp(
+          theme: ScalapayTheme.light(),
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: const TextScaler.linear(2)),
+            child: child!,
+          ),
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => Center(
+                child: TextButton(
+                  onPressed: () => onOpen(context),
+                  child: const Text('open'),
+                ),
+              ),
+            ),
+          ),
+        );
+
+    const longOptions = <_Sort, String>{
+      _Sort.priceAsc: 'Prezzo crescente dal più basso al più alto',
+      _Sort.priceDesc: 'Prezzo decrescente dal più alto al più basso',
+    };
+
+    testWidgets('sort sheet opened via show shows every long option without '
+        'overflow at 200% text scale', (tester) async {
+      tester.view.physicalSize = const Size(375, 812);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        appAtScale((context) async {
+          await ScalapaySortBottomSheet.show<_Sort>(
+            context,
+            title: 'Ordina',
+            options: longOptions,
+            selected: _Sort.priceAsc,
+          );
+        }),
+      );
+      await _open(tester);
+
+      expect(tester.takeException(), isNull);
+      for (final label in longOptions.values) {
+        await tester.scrollUntilVisible(find.text(label), 200);
+        expect(find.text(label), findsOneWidget);
+      }
+    });
+
+    testWidgets(
+      'filters sheet opened via show shows both footer buttons without '
+      'overflow at 200% text scale',
+      (tester) async {
+        tester.view.physicalSize = const Size(375, 812);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await tester.pumpWidget(
+          appAtScale((context) async {
+            await ScalapayFiltersBottomSheet.show(
+              context,
+              title: 'Filtri',
+              priceTitle: 'Fascia di prezzo molto lunga da visualizzare',
+              minLabel: 'Minimo',
+              maxLabel: 'Massimo',
+              clearLabel: 'Cancella tutto',
+              applyLabel: 'Mostra risultati',
+              onClear: () {},
+              onApply: () {},
+            );
+          }),
+        );
+        await _open(tester);
+
+        expect(tester.takeException(), isNull);
+        // The two price fields' EditableText each own a Scrollable too, so
+        // the outer one (the one scrolling the whole sheet) is picked out by
+        // its ancestry, not by type alone.
+        final outerScrollable = find
+            .ancestor(
+              of: find.byType(ScalapayFiltersBottomSheet),
+              matching: find.byType(Scrollable),
+            )
+            .first;
+        for (final label in ['Cancella tutto', 'Mostra risultati']) {
+          await tester.scrollUntilVisible(
+            find.text(label),
+            200,
+            scrollable: outerScrollable,
+          );
+          expect(find.text(label), findsOneWidget);
+        }
+      },
+    );
+  });
+
+  group('accessibility - tap target guidelines', () {
+    testWidgets('sort sheet opened via show meets tap target guidelines', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        _app((context) async {
+          await ScalapaySortBottomSheet.show<_Sort>(
+            context,
+            title: 'Ordina',
+            options: _options,
+            selected: _Sort.priceAsc,
+          );
+        }),
+      );
+      await _open(tester);
+
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      handle.dispose();
+    });
+
+    testWidgets('filters sheet opened via show meets tap target guidelines', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        _app((context) async {
+          await ScalapayFiltersBottomSheet.show(
+            context,
+            title: 'Filtri',
+            priceTitle: 'Fascia di prezzo',
+            minLabel: 'Minimo',
+            maxLabel: 'Massimo',
+            clearLabel: 'Cancella tutto',
+            applyLabel: 'Mostra risultati',
+            onClear: () {},
+            onApply: () {},
+          );
+        }),
+      );
+      await _open(tester);
+
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      handle.dispose();
+    });
+  });
 }

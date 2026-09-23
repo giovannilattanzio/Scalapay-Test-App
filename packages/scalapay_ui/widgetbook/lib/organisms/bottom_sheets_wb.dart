@@ -40,6 +40,7 @@ ScalapayFiltersBottomSheet _filters(
       label: 'Apply label',
       initialValue: 'Mostra risultati',
     ),
+    closeLabel: context.knobs.stringOrNull(label: 'Close label'),
     minController: min,
     maxController: max,
     priceError: priceError.isEmpty ? null : priceError,
@@ -64,22 +65,26 @@ Widget filtersFilled(BuildContext context) => Align(
 );
 
 @widgetbook.UseCase(name: 'Open as modal', type: ScalapayFiltersBottomSheet)
-Widget filtersModal(BuildContext context) => Center(
-  child: ScalapayButton(
-    label: 'Open filters',
-    onPressed: () => ScalapayFiltersBottomSheet.show(
-      context,
-      title: 'Filtri',
-      priceTitle: 'Fascia di prezzo',
-      minLabel: 'Minimo',
-      maxLabel: 'Massimo',
-      clearLabel: 'Cancella tutto',
-      applyLabel: 'Mostra risultati',
-      onClear: () {},
-      onApply: () {},
+Widget filtersModal(BuildContext context) {
+  final closeLabel = context.knobs.stringOrNull(label: 'Close label');
+  return Center(
+    child: ScalapayButton(
+      label: 'Open filters',
+      onPressed: () => ScalapayFiltersBottomSheet.show(
+        context,
+        title: 'Filtri',
+        priceTitle: 'Fascia di prezzo',
+        minLabel: 'Minimo',
+        maxLabel: 'Massimo',
+        clearLabel: 'Cancella tutto',
+        applyLabel: 'Mostra risultati',
+        closeLabel: closeLabel,
+        onClear: () {},
+        onApply: () {},
+      ),
     ),
-  ),
-);
+  );
+}
 
 @widgetbook.UseCase(name: 'Selected option', type: ScalapaySortBottomSheet)
 Widget sortSelected(BuildContext context) => Align(
@@ -93,20 +98,25 @@ Widget sortSelected(BuildContext context) => Align(
       initialOption: _Sort.priceAsc,
       labelBuilder: (value) => _sortOptions[value]!,
     ),
+    closeLabel: context.knobs.stringOrNull(label: 'Close label'),
     onChanged: (_) {},
     onClose: () {},
   ),
 );
 
 @widgetbook.UseCase(name: 'Open as modal', type: ScalapaySortBottomSheet)
-Widget sortModal(BuildContext context) => Center(
-  child: ScalapayButton(
-    label: 'Open sort',
-    onPressed: () => ScalapaySortBottomSheet.show<_Sort>(
-      context,
-      title: 'Ordina',
-      options: _sortOptions,
-      selected: _Sort.priceAsc,
+Widget sortModal(BuildContext context) {
+  final closeLabel = context.knobs.stringOrNull(label: 'Close label');
+  return Center(
+    child: ScalapayButton(
+      label: 'Open sort',
+      onPressed: () => ScalapaySortBottomSheet.show<_Sort>(
+        context,
+        title: 'Ordina',
+        options: _sortOptions,
+        selected: _Sort.priceAsc,
+        closeLabel: closeLabel,
+      ),
     ),
-  ),
-);
+  );
+}

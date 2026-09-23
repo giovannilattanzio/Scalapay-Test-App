@@ -38,4 +38,26 @@ void main() {
 
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
   });
+
+  testWidgets('CatalogLoading exposes a translated label', (tester) async {
+    final handle = tester.ensureSemantics();
+    await pumpApp(tester, const CatalogLoading());
+
+    expect(
+      tester.getSemantics(find.byType(CircularProgressIndicator)),
+      matchesSemantics(label: 'Caricamento prodotti'),
+    );
+    handle.dispose();
+  });
+
+  testWidgets('the message is announced as a live region', (tester) async {
+    final handle = tester.ensureSemantics();
+    await pumpApp(tester, const CatalogMessage(message: 'Nothing here'));
+
+    expect(
+      tester.getSemantics(find.text('Nothing here')),
+      matchesSemantics(label: 'Nothing here', isLiveRegion: true),
+    );
+    handle.dispose();
+  });
 }

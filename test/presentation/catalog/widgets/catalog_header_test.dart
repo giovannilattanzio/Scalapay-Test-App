@@ -28,4 +28,15 @@ void main() {
 
     expect(submitted, 'nike');
   });
+
+  testWidgets('the title is exposed as a header', (tester) async {
+    final handle = tester.ensureSemantics();
+    await pumpApp(tester, const CatalogHeader());
+
+    expect(
+      tester.getSemantics(find.text('Esplora i prodotti')),
+      matchesSemantics(label: 'Esplora i prodotti', isHeader: true),
+    );
+    handle.dispose();
+  });
 }

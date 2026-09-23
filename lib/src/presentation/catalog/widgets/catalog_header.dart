@@ -32,9 +32,12 @@ class CatalogHeader extends StatelessWidget {
           padding: const EdgeInsets.symmetric(
             horizontal: _titleHorizontalPadding,
           ),
-          child: Text(
-            'catalog.title'.tr(),
-            style: t.typography.h2.copyWith(color: t.colors.textPrimary),
+          child: Semantics(
+            header: true,
+            child: Text(
+              'catalog.title'.tr(),
+              style: t.typography.h2.copyWith(color: t.colors.textPrimary),
+            ),
           ),
         ),
         const SizedBox(height: _titleToSearchGap),

@@ -5,36 +5,10 @@ import 'package:scalapay_widgetbook/main.dart';
 import 'package:scalapay_widgetbook/main.directories.g.dart';
 import 'package:widgetbook/widgetbook.dart';
 
-/// A use case with the route Widgetbook resolves for it.
-///
-/// `WidgetbookNode.path` is not a valid route: it has no separator between the
-/// folder and the component. The route is `folder/component/use-case`, each
-/// segment lowercased with spaces turned into dashes.
-typedef _UseCaseRoute = ({WidgetbookUseCase useCase, String route});
-
-List<_UseCaseRoute> _useCaseRoutes() {
-  final routes = <_UseCaseRoute>[];
-  String segment(String name) => name.toLowerCase().replaceAll(' ', '-');
-
-  void walk(List<WidgetbookNode> nodes, List<String> parents) {
-    for (final node in nodes) {
-      if (node is WidgetbookUseCase) {
-        routes.add((
-          useCase: node,
-          route: [...parents, segment(node.name)].join('/'),
-        ));
-      } else {
-        walk(node.children ?? const [], [...parents, segment(node.name)]);
-      }
-    }
-  }
-
-  walk(directories, const []);
-  return routes;
-}
+import 'support/use_case_routes.dart';
 
 /// Opens Widgetbook on [route] and checks that Widgetbook selected it.
-Future<void> _openRoute(WidgetTester tester, _UseCaseRoute target) async {
+Future<void> _openRoute(WidgetTester tester, UseCaseRoute target) async {
   tester.view.physicalSize = const Size(1600, 1000);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
@@ -95,7 +69,7 @@ void main() {
   });
 
   group('every use case renders inside Widgetbook without errors', () {
-    final routes = _useCaseRoutes();
+    final routes = useCaseRoutes();
 
     test('use cases were discovered', () => expect(routes, isNotEmpty));
 
@@ -123,7 +97,7 @@ void main() {
           ),
         ]) {
       testWidgets(folderAndType, (tester) async {
-        final target = _useCaseRoutes().firstWhere(
+        final target = useCaseRoutes().firstWhere(
           (r) => r.route == '$folderAndType/open-as-modal',
         );
         await _openRoute(tester, target);

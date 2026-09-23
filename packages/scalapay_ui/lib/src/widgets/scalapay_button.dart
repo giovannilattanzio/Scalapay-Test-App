@@ -45,6 +45,7 @@ class ScalapayButton extends StatelessWidget {
       button: true,
       enabled: enabled,
       label: label,
+      onTap: onPressed,
       excludeSemantics: true,
       child: Material(
         // Tertiary has no fill: transparency instead of a transparent color.

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:scalapay_ui/scalapay_ui.dart';
 // The frame is internal, so it is imported from src.
@@ -8,6 +9,23 @@ import 'package:scalapay_ui/src/organisms/internal/bottom_sheet_frame.dart';
 
 Widget _host(Widget child, {double width = 375}) => MaterialApp(
   theme: ScalapayTheme.light(),
+  home: Scaffold(
+    body: Align(
+      alignment: Alignment.topLeft,
+      child: SizedBox(width: width, child: child),
+    ),
+  ),
+);
+
+Widget _italianHost(Widget child, {double width = 375}) => MaterialApp(
+  theme: ScalapayTheme.light(),
+  locale: const Locale('it'),
+  supportedLocales: const [Locale('it'), Locale('en')],
+  localizationsDelegates: const [
+    GlobalMaterialLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+  ],
   home: Scaffold(
     body: Align(
       alignment: Alignment.topLeft,
@@ -146,6 +164,99 @@ void main() {
     );
     expect(tester.getSize(find.byType(BottomSheetFrame)).height, 191);
     expect(tester.getBottomLeft(find.byKey(const ValueKey('body'))).dy, 191);
+  });
+
+  group('close button label', () {
+    testWidgets('without a closeLabel it falls back to the localized default, '
+        'not the English word', (tester) async {
+      final handle = tester.ensureSemantics();
+      late BuildContext capturedContext;
+      await tester.pumpWidget(
+        _italianHost(
+          Builder(
+            builder: (context) {
+              capturedContext = context;
+              return BottomSheetFrame(
+                title: 'Filtri',
+                onClose: () {},
+                child: _body,
+              );
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final expectedLabel = MaterialLocalizations.of(capturedContext)
+          .closeButtonTooltip;
+      expect(expectedLabel, isNot('Close'));
+
+      expect(
+        tester.getSemantics(
+          find.descendant(
+            of: find.byType(BottomSheetFrame),
+            matching: find.bySemanticsLabel(expectedLabel),
+          ),
+        ),
+        matchesSemantics(
+          label: expectedLabel,
+          isButton: true,
+          hasTapAction: true,
+        ),
+      );
+      handle.dispose();
+    });
+
+    testWidgets('a caller-supplied closeLabel is used', (tester) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        _host(
+          BottomSheetFrame(
+            title: 'Filtri',
+            closeLabel: 'Chiudi filtri',
+            onClose: () {},
+            child: _body,
+          ),
+        ),
+      );
+
+      expect(
+        tester.getSemantics(
+          find.descendant(
+            of: find.byType(BottomSheetFrame),
+            matching: find.bySemanticsLabel('Chiudi filtri'),
+          ),
+        ),
+        matchesSemantics(
+          label: 'Chiudi filtri',
+          isButton: true,
+          hasTapAction: true,
+        ),
+      );
+      handle.dispose();
+    });
+
+    testWidgets(
+      'performing the semantics tap action invokes onClose exactly once',
+      (tester) async {
+        final handle = tester.ensureSemantics();
+        var closes = 0;
+        await tester.pumpWidget(
+          _host(
+            BottomSheetFrame(
+              title: 'Filtri',
+              closeLabel: 'Chiudi filtri',
+              onClose: () => closes++,
+              child: _body,
+            ),
+          ),
+        );
+
+        tester.semantics.tap(find.semantics.byLabel('Chiudi filtri'));
+        expect(closes, 1);
+        handle.dispose();
+      },
+    );
   });
 
   test('the frame is not exported by the package', () {

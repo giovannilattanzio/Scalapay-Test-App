@@ -11,7 +11,8 @@
     "error_parsing": "We couldn't read the results. Please try again later.",
     "error_generic": "Something went wrong. Please try again.",
     "retry": "Retry",
-    "load_more_error": "Couldn't load more. Retry."
+    "load_more_error": "Couldn't load more. Retry.",
+    "loading": "Loading products"
   },
   "product": {
     "installment_connector": "instalments of",
